@@ -39,32 +39,25 @@ main,footer.page-footer{position:relative;z-index:1}
 .glass{
   position:relative;overflow:hidden;color:var(--ink);
   border:1px solid transparent;
-  background:linear-gradient(135deg,rgba(255,255,255,.095),rgba(255,255,255,.025) 62%),rgba(12,12,12,.24);
-  background-clip:padding-box;
+  background:linear-gradient(135deg,rgba(255,255,255,.095),rgba(12,12,12,.24) 72%) padding-box,
+    linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.1)) border-box;
   backdrop-filter:blur(18px) saturate(1.35);-webkit-backdrop-filter:blur(18px) saturate(1.35);
   box-shadow:0 8px 24px rgba(0,0,0,.16);
   border-radius:999px;transition:transform .25s ease,border-color .25s ease;
 }
-.glass::after{content:none}
-.glass::before{
-  content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:2;
-  background:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.1));
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
-  opacity:.82;transition:opacity .25s ease;
-}
 /* 主按钮：静态斜向雾光；悬停时只加深光感，不使用扫光动画。 */
 :is(a,button).glass{
   border:1px solid transparent;
-  background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045) 37%,rgba(255,255,255,.01) 62%),rgba(10,11,14,.64);
+  background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(10,11,14,.64) 72%) padding-box,
+    linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.1)) border-box;
   box-shadow:0 10px 26px rgba(0,0,0,.25);
 }
 :is(a,button).glass:hover{
   border-color:transparent;transform:translateY(-1px);
-  background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(255,255,255,.11) 37%,rgba(255,255,255,.025) 62%),rgba(10,11,14,.64);
+  background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(10,11,14,.64) 72%) padding-box,
+    linear-gradient(90deg,rgba(255,255,255,.86),rgba(255,255,255,.2)) border-box;
   box-shadow:0 12px 30px rgba(143,166,255,.17);
 }
-.glass:hover::before{opacity:1}
 /* ---- 首屏 ---- */
 .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;z-index:1}
 .hero-bg{position:absolute;inset:0;z-index:-1}
