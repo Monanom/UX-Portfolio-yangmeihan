@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>资深 UX 体验设计师 - 个人作品集</title>
+<meta name="description" content="聚焦 BG 端采购行业体验设计、AI Agent 设计、设计系统与工程化的资深 UX 体验设计师个人作品集。" />
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0a0a0a; --surface-1:#111; --surface-2:#171717;
+  --ink:rgba(255,255,255,.96); --ink-dim:rgba(255,255,255,.68); --ink-soft:rgba(255,255,255,.5);
+  --line:rgba(255,255,255,.12);
+  --container:min(1280px, calc(100vw - 40px));
+  --gutter:clamp(20px,4vw,40px);
+  --section-space:clamp(88px,10vw,144px);
+  --radius-card:24px; --radius-media:18px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);overflow-x:clip;position:relative}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---- 背景点阵画布 ---- */
+.dot-field{position:fixed;inset:0;z-index:0;pointer-events:none}
+main,footer.page-footer{position:relative;z-index:1}
+
+/* ---- 液态玻璃控件 ---- */
+.glass{
+  position:relative;overflow:hidden;color:var(--ink);
+  border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(135deg,rgba(255,255,255,.095),rgba(255,255,255,.025) 62%),rgba(12,12,12,.24);
+  backdrop-filter:blur(18px) saturate(1.35);-webkit-backdrop-filter:blur(18px) saturate(1.35);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.2),0 8px 24px rgba(0,0,0,.16);
+  border-radius:999px;transition:transform .25s ease,border-color .25s ease;
+}
+.glass:hover{border-color:rgba(255,255,255,.28);transform:translateY(-1px)}
+.glass-bright{
+  position:relative;overflow:hidden;color:#101010;
+  border:1px solid rgba(255,255,255,.3);
+  background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(255,255,255,.78) 68%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.68),0 8px 24px rgba(0,0,0,.16);
+  border-radius:999px;transition:transform .25s ease;
+}
+.glass-bright:hover{transform:translateY(-1px)}
+
+/* ---- 首屏 ---- */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;z-index:1}
+.hero-bg{position:absolute;inset:0;z-index:-1}
+.hero-bg img{width:100%;height:100%;object-fit:cover;animation:heroDrift 26s ease-in-out infinite alternate}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.55),rgba(10,10,10,.15) 40%,rgba(10,10,10,.72) 100%)}
+@keyframes heroDrift{from{transform:scale(1.02)}to{transform:scale(1.1) translateX(-1.5%)}}
+.nav{display:flex;align-items:center;justify-content:space-between;width:var(--container);margin:0 auto;padding:26px 0}
+.nav-logo{font-weight:800;font-size:18px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+.nav-logo .mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#7aa8ff,#b48cff);display:inline-block}
+.nav-links{display:flex;gap:34px;font-size:14px;color:var(--ink-dim)}
+.nav-links a{transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)}
+.nav-cta{padding:10px 22px;font-size:14px;font-weight:600}
+.hero-center{flex:1;display:flex;flex-direction:column;justify-content:flex-end;width:var(--container);margin:0 auto;padding-bottom:clamp(56px,9vh,110px)}
+.hero-kicker{font-size:clamp(40px,7vw,96px);font-weight:800;line-height:1.02;letter-spacing:-.01em}
+.hero-subtitle{margin-top:18px;font-size:clamp(16px,2vw,24px);color:var(--ink);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.hero-subtitle .divider{color:var(--ink-soft)}
+.hero-subtext{margin-top:14px;max-width:560px;color:var(--ink-dim);font-size:clamp(14px,1.4vw,17px);line-height:1.6}
+.hero-actions{margin-top:30px}
+.hero-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;font-size:15px}
+.mobile-menu{display:none}
+
+/* ---- 区块公共 ---- */
+.section-eyebrow{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:14px}
+.section-title{font-size:clamp(40px,6vw,72px);font-weight:800;line-height:1.05}
+.fade-in{opacity:0;transform:translateY(var(--y,24px)) translateX(var(--x,0));transition:opacity .7s ease var(--delay,0ms),transform .7s ease var(--delay,0ms)}
+.fade-in.in{opacity:1;transform:none}
+
+/* ---- 走马灯 ---- */
+.marquee{padding:var(--section-space) 0 calc(var(--section-space)*.6);overflow:hidden;display:flex;flex-direction:column;gap:20px}
+.marquee-row{display:flex;gap:20px;width:max-content;animation:slideL 46s linear infinite}
+.marquee-row.reverse{animation-name:slideR}
+.marquee:hover .marquee-row{animation-play-state:paused}
+@keyframes slideL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes slideR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.tile{width:clamp(280px,32vw,460px);aspect-ratio:3/2;border-radius:var(--radius-media);overflow:hidden;flex:none;background:var(--surface-1)}
+.tile img{width:100%;height:100%;object-fit:cover}
+
+/* ---- 关于我 ---- */
+.about{width:var(--container);margin:0 auto;padding:var(--section-space) 0}
+.about-header{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;margin-bottom:48px;flex-wrap:wrap}
+.about-title{font-size:clamp(34px,5vw,60px);font-weight:800;margin-bottom:18px}
+.about-summary{max-width:640px;color:var(--ink-dim);font-size:clamp(15px,1.5vw,18px);line-height:1.7}
+.contact-button{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;font-weight:600;font-size:15px;white-space:nowrap}
+.wechat-contact{position:relative}
+.wechat-popover{
+  position:absolute;top:calc(100% + 14px);right:0;width:240px;padding:18px;border-radius:20px;
+  background:rgba(18,18,18,.92);border:1px solid var(--line);backdrop-filter:blur(22px);
+  box-shadow:0 16px 44px rgba(0,0,0,.4);opacity:0;pointer-events:none;transform:translateY(-6px);
+  transition:opacity .25s ease,transform .25s ease;z-index:40;
+}
+.wechat-contact.open .wechat-popover{opacity:1;pointer-events:auto;transform:translateX(var(--px,0))}
+.wechat-popover.center{right:auto;left:50%;--px:-50%;transform:translate(-50%,-6px)}
+.footer-cta .wechat-popover{top:auto;bottom:calc(100% + 14px);transform:translate(-50%,6px)}
+.wechat-profile{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.wechat-avatar img{width:44px;height:44px;border-radius:50%}
+.wechat-profile-name{display:block;font-size:15px}
+.wechat-profile-location{font-size:12px;color:var(--ink-soft)}
+.wechat-qr-image{width:100%;border-radius:12px}
+.wechat-popover .hint{margin-top:10px;font-size:12px;color:var(--ink-soft);text-align:center}
+
+.feature-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) minmax(0,1fr);gap:20px}
+.feature-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+.feature-grid>*{min-width:0}
+.feature-card{
+  position:relative;border-radius:var(--radius-card);overflow:hidden;background:var(--surface-1);
+  border:1px solid var(--line);min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;
+}
+.feature-card.tall{min-height:640px}
+.feature-card .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
+.feature-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.05) 40%,rgba(10,10,10,.78))}
+.feature-label{
+  position:absolute;top:18px;left:18px;z-index:2;display:flex;gap:8px;align-items:center;
+  padding:8px 16px;font-size:13px;color:var(--ink);border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);background:rgba(12,12,12,.35);backdrop-filter:blur(14px);
+}
+.feature-label .spark{color:var(--ink-soft)}
+.big-stat-content{position:relative;z-index:2;padding:28px}
+.big-stat-content strong{display:block;font-size:clamp(48px,5vw,76px);font-weight:800;line-height:1}
+.big-stat-content>span{color:var(--ink-dim);font-size:15px}
+.profile-tags{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.profile-tags span{padding:8px 16px;font-size:13px;border-radius:999px}
+.design-beliefs{position:relative;z-index:2;list-style:none;padding:24px;display:flex;flex-direction:column;gap:14px}
+.design-beliefs li{display:flex;gap:10px;font-size:15px;line-height:1.55;color:var(--ink)}
+.design-beliefs li span{color:var(--ink-soft)}
+.career-list{position:relative;z-index:2;padding:64px 24px 16px}
+.career-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px}
+.career-row:last-child{border-bottom:none}
+.career-row span:first-child{color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.career-row strong{font-size:15px}
+.career-row span:last-child{color:var(--ink-dim);font-size:13px;text-align:right}
+.tool-marquee{position:relative;z-index:2;padding:22px 0;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.tool-row{display:flex;gap:12px;width:max-content;animation:slideL 24s linear infinite}
+.tool-row.right{animation-name:slideR}
+.tool-tile{padding:12px 22px;font-size:15px;border-radius:14px;white-space:nowrap}
+.advantage-grid{position:relative;z-index:2;padding:24px;display:flex;flex-wrap:wrap;gap:14px;align-content:flex-end}
+.advantage-tag{padding:12px 22px;font-size:14px;border-radius:999px;animation:floatTag var(--dur,9s) ease-in-out infinite alternate;transform:rotate(var(--rot,0deg))}
+@keyframes floatTag{from{transform:rotate(var(--rot,0deg)) translate(0,0)}to{transform:rotate(var(--rot,0deg)) translate(var(--tx,4px),var(--ty,-6px))}}
+
+/* ---- 精选项目 ---- */
+.projects{padding:var(--section-space) 0 0}
+.projects-header{width:var(--container);margin:0 auto 56px}
+.project-wrap{position:sticky;top:calc(60px + var(--stack,0px));padding:0 var(--gutter) 40px}
+.project-card{
+  width:min(1280px,100%);margin:0 auto;border-radius:32px;border:1px solid var(--line);
+  background:linear-gradient(160deg,var(--accent-fade,rgba(255,255,255,.04)),transparent 55%),var(--surface-1);
+  box-shadow:0 -12px 44px rgba(0,0,0,.45);
+  display:grid;grid-template-columns:1fr 1.15fr;gap:40px;padding:clamp(28px,4vw,56px);min-height:520px;
+}
+.project-copy{display:flex;flex-direction:column;justify-content:space-between;gap:28px}
+.project-name{font-size:clamp(30px,3.4vw,48px);font-weight:800;line-height:1.12;margin-bottom:18px}
+.project-desc{color:var(--ink-dim);font-size:clamp(14px,1.3vw,17px);line-height:1.7;max-width:480px}
+.project-meta{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.project-meta span{padding:9px 18px;font-size:13px;border-radius:999px}
+.live-button{align-self:flex-start;padding:13px 26px;font-size:14px;display:inline-flex;gap:8px;align-items:center}
+.project-visual{display:flex;flex-direction:column;gap:22px}
+.project-image{border-radius:var(--radius-media);overflow:hidden;flex:1;border:1px solid var(--accent-border,var(--line));padding:0;text-align:left}
+.project-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.project-card:hover .project-image img{transform:scale(1.03)}
+.project-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.project-stat{border-top:1px solid var(--line);padding-top:16px}
+.project-stat span{display:block;color:var(--ink-soft);font-size:13px;margin-bottom:6px}
+.project-stat strong{font-size:clamp(26px,2.6vw,40px);font-weight:800}
+
+/* ---- 其他项目 ---- */
+.other-projects{width:var(--container);margin:0 auto;padding:var(--section-space) 0}
+.other-filter{display:flex;gap:10px;margin:34px 0 30px;flex-wrap:wrap}
+.other-filter button{padding:10px 22px;font-size:14px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);transition:all .2s}
+.other-filter button.active,.other-filter button:hover{color:var(--ink);border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06)}
+.other-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.other-card{border-radius:var(--radius-media);overflow:hidden;border:1px solid var(--line);aspect-ratio:3/2;padding:0;background:var(--surface-1);transition:opacity .3s,transform .3s}
+.other-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.other-card:hover img{transform:scale(1.04)}
+.other-card.hidden{display:none}
+
+/* ---- 联系 ---- */
+.footer-cta{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--section-space) var(--gutter)}
+.footer-cta h2{max-width:920px;font-size:clamp(44px,8.5vw,110px);line-height:.92;font-weight:900;text-transform:uppercase;margin-bottom:26px}
+.footer-cta p{color:var(--ink-dim);max-width:600px;font-size:clamp(15px,1.6vw,19px);line-height:1.55;margin-bottom:32px}
+.footer-contact-phone{margin-top:16px;color:var(--ink-dim);font-size:13px;letter-spacing:.04em}
+.footer-contact-phone:hover{color:var(--ink)}
+footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var(--container);margin:0 auto;padding:32px 0 48px;color:var(--ink-dim);text-transform:uppercase;font-size:12px}
+
+/* ---- 项目详情抽屉 ---- */
+.case-overlay{position:fixed;inset:0;z-index:100;display:none}
+.case-overlay.open{display:block}
+.case-backdrop{position:absolute;inset:0;background:rgba(5,5,5,.72);backdrop-filter:blur(8px)}
+.case-close{position:absolute;top:24px;right:24px;z-index:120;width:48px;height:48px;font-size:20px;line-height:1}
+.case-sheet{
+  position:absolute;inset:4vh 4vw;border-radius:28px;overflow-y:auto;background:var(--surface-1);
+  border:1px solid var(--line);padding:clamp(24px,4vw,56px);overscroll-behavior:contain;
+}
+.case-sheet h3{font-size:clamp(26px,3vw,40px);font-weight:800;margin-bottom:12px}
+.case-sheet .case-desc{color:var(--ink-dim);max-width:720px;line-height:1.7;margin-bottom:30px}
+.case-gallery{display:flex;flex-direction:column;gap:20px}
+.case-gallery img{width:100%;border-radius:var(--radius-media);border:1px solid var(--line)}
+
+/* ---- 响应式 ---- */
+@media (max-width:900px){
+  .nav-links{display:none}
+  .nav{position:fixed;top:0;left:0;right:0;z-index:60;padding:16px 20px;background:rgba(10,10,10,.75);backdrop-filter:blur(18px)}
+  .nav-links.open{display:flex;position:fixed;inset:64px 0 auto 0;flex-direction:column;background:rgba(10,10,10,.96);padding:24px;gap:20px;z-index:59}
+  .mobile-menu{display:inline-flex;padding:10px 20px;font-size:14px}
+  .feature-grid{grid-template-columns:1fr}
+  .feature-card.tall{min-height:420px}
+  .project-card{grid-template-columns:1fr;min-height:0}
+  .other-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){.other-grid{grid-template-columns:1fr}.project-stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<canvas class="dot-field" id="dotField" aria-hidden="true"></canvas>
+
+<header class="hero" id="top">
+  <div class="hero-bg"><img src="assets/hero-poster.jpg" alt="" /></div>
+  <nav class="nav" aria-label="主导航">
+    <a class="nav-logo" href="#top"><span class="mark"></span>Lecai UX</a>
+    <div class="nav-links" id="navLinks">
+      <a class="active" href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#projects">Work</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a class="glass-bright nav-cta" href="#explore">Start Exploring</a>
+      <button class="glass mobile-menu" id="menuButton" aria-expanded="false">Menu</button>
+    </div>
+  </nav>
+  <div class="hero-center">
+    <p class="hero-kicker fade-in">UX Experience Designer</p>
+    <p class="hero-subtitle fade-in" style="--delay:120ms">B/G端 政企采购<span class="divider">｜</span>AI Agent 设计<span class="divider">｜</span>设计系统与工程化</p>
+    <p class="hero-subtext fade-in" style="--delay:200ms">我们习惯仰望星空，却忘了脚下的选择，也能改变未来的轨迹。</p>
+    <div class="hero-actions fade-in" style="--delay:300ms">
+      <a class="glass hero-primary" href="#projects">查看作品 ↗</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 走马灯 -->
+  <section class="marquee" id="explore" aria-label="精选视觉项目预览">
+    <div class="marquee-row" id="rowOne"></div>
+    <div class="marquee-row reverse" id="rowTwo"></div>
+  </section>
+
+  <!-- 关于我 -->
+  <section class="about" id="about">
+    <div class="about-header">
+      <div>
+        <p class="section-eyebrow fade-in">About / 01</p>
+        <h2 class="about-title fade-in">Hi，我是一名资深 UX 体验设计师。</h2>
+        <p class="about-summary fade-in" style="--delay:100ms">近10年 UI/UX 产品设计经验，专注 B端 SaaS、C 端工具、AI 产品与企业级系统设计。擅长从复杂业务中梳理信息架构，构建可扩展的设计体系，推动产品体验与业务价值共同成长。</p>
+      </div>
+      <div class="wechat-contact fade-in" style="--delay:160ms">
+        <button class="glass-bright contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
+        <div class="wechat-popover" role="dialog" aria-label="微信联系名片">
+          <div class="wechat-profile">
+            <div class="wechat-avatar"><img src="assets/wechat-avatar.png" alt="微信头像" /></div>
+            <div><strong class="wechat-profile-name">微信名片</strong><span class="wechat-profile-location">（待补充）</span></div>
+          </div>
+          <img class="wechat-qr-image" src="assets/wechat-qr.png" alt="微信二维码（占位）" />
+          <p class="hint">扫码添加微信（占位图，待替换）</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card tall fade-in" style="--x:-30px;--y:0">
+        <img class="bgimg" src="assets/about-portrait.jpg" alt="" />
+        <div class="shade"></div>
+        <div class="feature-label"><span class="spark">✦</span><span>个人背景</span><span class="spark">✦</span></div>
+        <div class="big-stat-content">
+          <strong>5年</strong><span>B2G/B2B 体验设计经验</span>
+          <div class="profile-tags"><span class="glass">乐采AI</span><span class="glass">资深UX设计师</span><span class="glass">最佳体验奖·最佳视觉奖</span></div>
+        </div>
+      </article>
+      <div class="feature-stack">
+        <article class="feature-card fade-in" style="--delay:80ms">
+          <img class="bgimg" src="assets/about-belief.jpg" alt="" />
+          <div class="shade"></div>
+          <div class="feature-label"><span class="spark">✦</span><span>设计理念</span><span class="spark">✦</span></div>
+          <ul class="design-beliefs">
+            <li><span>/</span><p>设计师是产品和用户之间的过渡者</p></li>
+            <li><span>/</span><p>站在用户视角，而非系统逻辑视角解决问题</p></li>
+          </ul>
+        </article>
+        <article class="feature-card fade-in" style="--delay:160ms">
+          <img class="bgimg" src="assets/about-career.jpg" alt="" />
+          <div class="shade"></div>
+          <div class="feature-label"><span class="spark">✦</span><span>职业经历</span><span class="spark">✦</span></div>
+          <div class="career-list">
+            <div class="career-row"><span>至今</span><strong>资深 UX 体验设计师</strong><span>乐采AI · 政企采购</span></div>
+            <div class="career-row"><span>2022–2023</span><strong>最佳体验奖 · 最佳视觉奖</strong><span>公司年度奖项</span></div>
+            <div class="career-row"><span>2023–2024</span><strong>锐意创新奖（团体）</strong><span>采云学院项目 · 连续两年</span></div>
+          </div>
+        </article>
+      </div>
+      <div class="feature-stack">
+        <article class="feature-card fade-in" style="--delay:120ms">
+          <img class="bgimg" src="assets/about-tools.jpg" alt="" />
+          <div class="shade"></div>
+          <div class="feature-label"><span class="spark">✦</span><span>日常工具</span><span class="spark">✦</span></div>
+          <div class="tool-marquee" aria-hidden="true">
+            <div class="tool-row" id="toolRowA"></div>
+            <div class="tool-row right" id="toolRowB"></div>
+          </div>
+        </article>
+        <article class="feature-card fade-in" style="--delay:220ms">
+          <img class="bgimg" src="assets/about-advantage.jpg" alt="" />
+          <div class="shade"></div>
+          <div class="feature-label"><span class="spark">✦</span><span>个人优势</span><span class="spark">✦</span></div>
+          <div class="advantage-grid">
+            <span class="glass advantage-tag" style="--rot:4deg;--dur:8.6s">B端 SaaS</span>
+            <span class="glass advantage-tag" style="--rot:-5deg;--dur:9.4s;--tx:-5px">C端工具</span>
+            <span class="glass advantage-tag" style="--rot:-4deg;--dur:10.2s;--ty:6px">Web 官网</span>
+            <span class="glass advantage-tag" style="--rot:5deg;--dur:9s;--tx:-4px;--ty:5px">AI 产品实践</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 精选项目 -->
+  <section class="projects" id="projects">
+    <div class="projects-header fade-in">
+      <p class="section-eyebrow">Selected Work / 02</p>
+      <h2 class="section-title">精选项目</h2>
+    </div>
+    <div id="projectList"></div>
+  </section>
+
+  <!-- 其他项目 -->
+  <section class="other-projects" id="other-projects">
+    <div class="fade-in">
+      <p class="section-eyebrow">More Work / 03</p>
+      <h2 class="section-title">其他项目</h2>
+    </div>
+    <div class="other-filter fade-in" style="--delay:80ms" id="otherFilter">
+      <button class="active" data-filter="all">全部</button>
+      <button data-filter="strategy">品牌与策略</button>
+      <button data-filter="tool">AI 与工具</button>
+      <button data-filter="mobile">C端电商</button>
+      <button data-filter="data">数据可视化</button>
+    </div>
+    <div class="other-grid" id="otherGrid"></div>
+  </section>
+
+  <!-- 联系 -->
+  <section class="footer-cta" id="contact">
+    <h2 class="fade-in">Design with strategy,<br>deliver with engineering.</h2>
+    <p class="fade-in" style="--delay:100ms">如果你正在构建 B/G 端系统、AI 产品或企业级设计体系，欢迎与我交流，一起把复杂业务变成清晰好用的产品。</p>
+    <div class="wechat-contact fade-in" style="--delay:180ms">
+      <button class="glass-bright contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
+      <div class="wechat-popover center" role="dialog" aria-label="微信联系名片">
+        <div class="wechat-profile">
+          <div class="wechat-avatar"><img src="assets/wechat-avatar.png" alt="微信头像" /></div>
+          <div><strong class="wechat-profile-name">微信名片</strong><span class="wechat-profile-location">（待补充）</span></div>
+        </div>
+        <img class="wechat-qr-image" src="assets/wechat-qr.png" alt="微信二维码（占位）" />
+        <p class="hint">扫码添加微信（占位图，待替换）</p>
+      </div>
+    </div>
+    <a class="footer-contact-phone" href="tel:13000000000">Tel. 130 0000 0000（占位）</a>
+  </section>
+</main>
+
+<footer class="page-footer">
+  <span>© 2026 Lecai UX</span>
+  <span>UI/UX Portfolio</span>
+</footer>
+
+<!-- 项目详情抽屉 -->
+<div class="case-overlay" id="caseOverlay" aria-hidden="true">
+  <button class="case-backdrop" data-case-close aria-label="关闭项目详情"></button>
+  <button class="glass case-close" data-case-close aria-label="关闭项目详情">✕</button>
+  <section class="case-sheet" role="dialog" aria-modal="true" aria-label="项目详情">
+    <h3 id="caseTitle"></h3>
+    <p class="case-desc" id="caseDesc"></p>
+    <div class="case-gallery" id="caseGallery"></div>
+  </section>
+</div>
+
+<script>
+/* ===== 数据（真实资料，来自作品集 PDF） ===== */
+const COVERS = ['proj-lemall','case-ai-agent','case-brand-matrix','case-dorami','case-caiyun','proj-dataviz','proj-designclaw','proj-supervision'];
+const PROJECTS = [
+  {id:'ai-agent', name:'政企商品牌矩阵<br>与视觉策略体系', desc:'从业务定位出发推导设计方向：主导「政府+互联网视觉语言」研究，独创 6 步推导法，产出《前台设计原则》，构建政企商品牌矩阵——政采蓝、乐采橙、溯采红三品牌落在矩阵不同象限，把模糊的「风格感觉」转化为可定位、可推导、可落地的策略框架。',
+   tags:['设计策略','品牌矩阵','前台设计原则'], cover:'case-ai-agent', accent:'rgba(135,166,255,',
+   stats:[['品牌视觉策略','3套'],['推导方法论','6步法']]},
+  {id:'dorami', name:'设计系统与工程化<br>Dorami 组件平台', desc:'主导前台设计体系梳理：统一 60 个基础组件样式与规则，建立主题 Token 变量实现多品牌一键换肤，落地 Dorami 组件资产管理平台，用 AI 承接前端开发，把交付链路从「设计稿→等排期」缩短为「设计稿→AI 生成代码→联调」。',
+   tags:['Design System','组件库','设计工程化'], cover:'case-dorami', accent:'rgba(102,255,196,',
+   stats:[['基础组件统一','60个'],['服务团队','20人']]},
+  {id:'caiyun', name:'采云学院<br>千万级平台体验重构', desc:'以设计 OWNER 身份完成采云学院视觉语言从 0 定义与体验全流程重构，沉淀 5 套课程模板与图片规范，覆盖 10+ 省级区划、5 万+ 评审专家，项目连续两年获团体锐意创新奖。',
+   tags:['0-1 重构','视觉语言','项目管理'], cover:'case-caiyun', accent:'rgba(0,138,214,',
+   stats:[['上线首年访问量','931.5万'],['学习人次','522万']]},
+  {id:'lecai-ai', name:'乐采 AI 3.0<br>多 Agent 体验设计', desc:'主导乐采 AI 3.0 整体体验框架与核心任务链路：定义主 Agent + 5 个垂直 Agent 的交互模式与协作关系，将复杂采购业务转化为用户可理解的智能工作流，并制定全平台 AI 视觉标准，推广至 AI 竞价、AI 合同等应用，成为公司 AI 化转型视觉侧的标准制定者。',
+   tags:['AI Agent','体验框架','视觉标准制定'], cover:'proj-designclaw', accent:'rgba(255,154,92,',
+   stats:[['垂直 Agent 协同','5+1'],['AI 产品覆盖','5款']]},
+];
+const OTHERS = [
+  {id:'brand', cat:'strategy', cover:'case-brand-matrix', title:'政企商品牌矩阵与视觉策略'},
+  {id:'govmall', cat:'strategy', cover:'proj-govmall', title:'政采商城样板间'},
+  {id:'lemall', cat:'strategy', cover:'proj-lemall', title:'乐采商城 · 服务类导购重构'},
+  {id:'sumall', cat:'mobile', cover:'proj-sumall', title:'溯采商城（C端电商）'},
+  {id:'plugin', cat:'tool', cover:'proj-plugin', title:'智能比价浏览器插件'},
+  {id:'supervision', cat:'tool', cover:'proj-supervision', title:'Supervision KB · 设计规范 Skill'},
+  {id:'designclaw', cat:'tool', cover:'proj-designclaw', title:'Design Claw · AI 设计工作流'},
+  {id:'dataviz', cat:'data', cover:'proj-dataviz', title:'数据可视化大屏'},
+];
+const TOOLS_A=['Figma','AntD','Vue3','Token','Vibe Coding','Codex','MCP'];
+const TOOLS_B=['策略','组件','平台','Agent','B/G端','C端','工程化'];
+
+/* ===== 走马灯 ===== */
+function fillRow(el, imgs){
+  const set = imgs.map(c=>`<div class="tile"><img loading="lazy" src="assets/${c}.jpg" alt="项目封面" /></div>`).join('');
+  el.innerHTML = set + set; /* 复制一份实现无缝循环 */
+}
+fillRow(document.getElementById('rowOne'), COVERS);
+fillRow(document.getElementById('rowTwo'), [...COVERS].reverse());
+document.getElementById('toolRowA').innerHTML = [...TOOLS_A,...TOOLS_A].map(t=>`<span class="glass tool-tile">${t}</span>`).join('');
+document.getElementById('toolRowB').innerHTML = [...TOOLS_B,...TOOLS_B].map(t=>`<span class="glass tool-tile">${t}</span>`).join('');
+
+/* ===== 精选项目卡片 ===== */
+document.getElementById('projectList').innerHTML = PROJECTS.map((p,i)=>`
+  <div class="project-wrap" style="--stack:${i*40}px">
+    <article class="project-card" style="--accent-fade:${p.accent}.06);--accent-border:${p.accent}.28)">
+      <div class="project-copy">
+        <div>
+          <h3 class="project-name">${p.name}</h3>
+          <p class="project-desc">${p.desc}</p>
+          <div class="project-meta">${p.tags.map(t=>`<span class="glass">${t}</span>`).join('')}</div>
+        </div>
+        <button class="glass live-button case-trigger" data-case="${p.id}">View Details ↗</button>
+      </div>
+      <div class="project-visual">
+        <button class="project-image case-trigger" data-case="${p.id}" aria-label="查看项目详情">
+          <img loading="lazy" src="assets/${p.cover}.jpg" alt="项目封面" />
+        </button>
+        <div class="project-stats">
+          ${p.stats.map(s=>`<div class="project-stat"><span>${s[0]}</span><strong>${s[1]}</strong></div>`).join('')}
+        </div>
+      </div>
+    </article>
+  </div>`).join('');
+
+/* ===== 其他项目 ===== */
+document.getElementById('otherGrid').innerHTML = OTHERS.map((o,i)=>`
+  <button class="other-card case-trigger fade-in" style="--delay:${i*40}ms" data-category="${o.cat}" data-case="${o.id}" data-title="${o.title}">
+    <img loading="lazy" src="assets/${o.cover}.jpg" alt="${o.title}" />
+  </button>`).join('');
+document.getElementById('otherFilter').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#otherFilter button').forEach(b=>b.classList.toggle('active', b===btn));
+  const f = btn.dataset.filter;
+  document.querySelectorAll('.other-card').forEach(c=>{
+    c.classList.toggle('hidden', f!=='all' && !c.dataset.category.includes(f));
+  });
+});
+
+/* ===== 详情抽屉 ===== */
+const overlay = document.getElementById('caseOverlay');
+function openCase(id){
+  const p = PROJECTS.find(x=>x.id===id);
+  const o = OTHERS.find(x=>x.id===id);
+  const title = p ? p.name.replace(/<br>/g,' ') : (o ? o.title : '项目详情');
+  const desc  = p ? p.desc : '该项目详情内容为占位文案，替换为你的真实项目介绍即可。';
+  const cover = p ? p.cover : (o ? o.cover : 'cover-saas');
+  document.getElementById('caseTitle').textContent = title;
+  document.getElementById('caseDesc').textContent = desc;
+  document.getElementById('caseGallery').innerHTML =
+    [1,2,3].map(()=>`<img src="assets/${cover}.jpg" alt="${title}" />`).join('');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  overlay.querySelector('.case-sheet').scrollTop = 0;
+}
+function closeCase(){
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+document.addEventListener('click', e=>{
+  const t = e.target.closest('.case-trigger');
+  if(t){ openCase(t.dataset.case); return; }
+  if(e.target.closest('[data-case-close]')) closeCase();
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeCase(); });
+
+/* ===== 微信弹层 ===== */
+document.querySelectorAll('.wechat-contact').forEach(w=>{
+  const btn = w.querySelector('.wechat-cta');
+  btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    const open = w.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.wechat-contact.open').forEach(w=>w.classList.remove('open'));
+});
+document.querySelectorAll('.wechat-popover').forEach(p=>p.addEventListener('click', e=>e.stopPropagation()));
+
+/* ===== 移动端菜单 ===== */
+const menuBtn = document.getElementById('menuButton'), navLinks = document.getElementById('navLinks');
+menuBtn.addEventListener('click', ()=>{
+  const open = navLinks.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded', open);
+});
+navLinks.addEventListener('click', ()=>navLinks.classList.remove('open'));
+
+/* ===== 滚动淡入 ===== */
+const io = new IntersectionObserver(es=>es.forEach(en=>{
+  if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+}),{threshold:.12});
+document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+
+/* ===== 导航高亮 ===== */
+const secs = ['top','about','projects','contact'].map(id=>document.getElementById(id));
+const navAs = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', ()=>{
+  let cur = 0;
+  secs.forEach((s,i)=>{ if(s && s.getBoundingClientRect().top < innerHeight*.4) cur = i; });
+  navAs.forEach((a,i)=>a.classList.toggle('active', i===cur));
+},{passive:true});
+
+/* ===== 鼠标点阵背景 ===== */
+const cv = document.getElementById('dotField'), ctx = cv.getContext('2d');
+let W,H,mx=-999,my=-999;
+function resize(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
+resize(); addEventListener('resize', resize);
+addEventListener('pointermove', e=>{ mx=e.clientX; my=e.clientY; });
+(function draw(){
+  ctx.clearRect(0,0,W,H);
+  const gap=34;
+  for(let x=gap/2;x<W;x+=gap)for(let y=gap/2;y<H;y+=gap){
+    const d=Math.hypot(x-mx,y-my);
+    const r=Math.max(.6, 2.2 - d/220);
+    ctx.globalAlpha=Math.max(.06, .5 - d/300);
+    ctx.fillStyle='#8fa8ff';
+    ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
