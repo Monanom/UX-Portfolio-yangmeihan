@@ -44,13 +44,23 @@ main,footer.page-footer{position:relative;z-index:1}
   box-shadow:inset 0 1px 1px rgba(255,255,255,.2),0 8px 24px rgba(0,0,0,.16);
   border-radius:999px;transition:transform .25s ease,border-color .25s ease;
 }
-.glass::after,.glass-bright::after{
-  content:"";position:absolute;inset:-60% auto -60% -42%;width:26%;pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);
-  transform:rotate(18deg) translateX(-360%);transition:transform .7s cubic-bezier(.2,.8,.2,1);
+.glass::after,.glass-bright::after{content:none}
+/* 主按钮：静态斜向雾光；悬停时只加深光感，不使用扫光动画。 */
+:is(a,button).glass{
+  border-color:rgba(255,255,255,.28);
+  background:linear-gradient(135deg,rgba(255,255,255,.19),rgba(255,255,255,.075) 37%,rgba(255,255,255,.015) 62%),rgba(10,11,14,.64);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.34),inset 12px 18px 28px rgba(255,255,255,.055),0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.25);
 }
-.glass:hover{border-color:rgba(255,255,255,.38);transform:translateY(-2px);box-shadow:inset 0 1px 1px rgba(255,255,255,.32),0 10px 30px rgba(103,134,255,.14)}
-.glass:hover::after,.glass-bright:hover::after{transform:rotate(18deg) translateX(760%)}
+:is(a,button).glass::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(130deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.09) 26%,transparent 56%);
+  opacity:.82;transition:opacity .25s ease;
+}
+:is(a,button).glass:hover{
+  border-color:rgba(255,255,255,.46);transform:translateY(-1px);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.5),inset 14px 20px 32px rgba(255,255,255,.1),0 0 0 1px rgba(255,255,255,.1),0 12px 30px rgba(143,166,255,.17);
+}
+:is(a,button).glass:hover::before{opacity:1}
 .glass-bright{
   position:relative;overflow:hidden;color:#101010;
   border:1px solid rgba(255,255,255,.3);
@@ -185,6 +195,7 @@ main,footer.page-footer{position:relative;z-index:1}
 .project-desc{color:var(--ink-dim);font-size:clamp(14px,1.3vw,17px);line-height:1.7;max-width:480px}
 .project-meta{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
 .project-meta span{padding:9px 18px;font-size:13px;border-radius:999px}
+.project-meta .glass:hover,.profile-tags .glass:hover,.tool-tile:hover,.advantage-tag:hover{transform:none;border-color:rgba(255,255,255,.22);box-shadow:inset 0 1px 1px rgba(255,255,255,.2),0 8px 24px rgba(0,0,0,.16)}
 .live-button{align-self:flex-start;padding:13px 26px;font-size:14px;display:inline-flex;gap:8px;align-items:center}
 .project-visual{display:flex;flex-direction:column;gap:22px}
 .project-image{border-radius:var(--radius-media);overflow:hidden;flex:1;border:1px solid var(--accent-border,var(--line));padding:0;text-align:left}
