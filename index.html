@@ -44,7 +44,7 @@ main,footer.page-footer{position:relative;z-index:1}
   box-shadow:0 8px 24px rgba(0,0,0,.16);
   border-radius:999px;transition:transform .25s ease,border-color .25s ease;
 }
-.glass::after,.glass-bright::after{content:none}
+.glass::after{content:none}
 .glass::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:2;
   background:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.1));
@@ -61,19 +61,9 @@ main,footer.page-footer{position:relative;z-index:1}
 :is(a,button).glass:hover{
   border-color:transparent;transform:translateY(-1px);
   background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.055) 37%,rgba(255,255,255,.015) 62%),rgba(10,11,14,.64);
-  box-shadow:0 12px 30px rgba(143,166,255,.17);
+  box-shadow:0 0 22px rgba(143,166,255,.2),0 16px 36px rgba(143,166,255,.28);
 }
 .glass:hover::before{opacity:1}
-.glass-bright{
-  position:relative;overflow:hidden;color:#101010;
-  border:1px solid rgba(255,255,255,.3);
-  background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(255,255,255,.78) 68%);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 8px 24px rgba(0,0,0,.16);
-  border-radius:999px;transition:transform .25s ease;
-}
-.glass-bright:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(171,190,255,.22)}
-
 /* ---- 首屏 ---- */
 .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;z-index:1}
 .hero-bg{position:absolute;inset:0;z-index:-1}
@@ -271,7 +261,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
       <a href="#contact">Contact</a>
     </div>
     <div style="display:flex;gap:12px;align-items:center">
-      <a class="glass-bright nav-cta" href="#explore">Start Exploring</a>
+      <a class="glass nav-cta" href="#explore">Start Exploring</a>
       <button class="glass mobile-menu" id="menuButton" aria-expanded="false">Menu</button>
     </div>
   </nav>
@@ -301,7 +291,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
         <p class="about-summary fade-in" style="--delay:100ms">近10年 UI/UX 产品设计经验，专注 B端 SaaS、C 端工具、AI 产品与企业级系统设计。擅长从复杂业务中梳理信息架构，构建可扩展的设计体系，推动产品体验与业务价值共同成长。</p>
       </div>
       <div class="wechat-contact fade-in" style="--delay:160ms">
-        <button class="glass-bright contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
+        <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
         <div class="wechat-popover" role="dialog" aria-label="微信联系名片">
           <div class="wechat-profile">
             <div class="wechat-avatar"><img src="assets/wechat-avatar.png" alt="微信头像" /></div>
@@ -399,7 +389,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
     <h2 class="fade-in">Design with strategy,<br>deliver with engineering.</h2>
     <p class="fade-in" style="--delay:100ms">如果你正在构建 B/G 端系统、AI 产品或企业级设计体系，欢迎与我交流，一起把复杂业务变成清晰好用的产品。</p>
     <div class="wechat-contact fade-in" style="--delay:180ms">
-      <button class="glass-bright contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
+      <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
       <div class="wechat-popover center" role="dialog" aria-label="微信联系名片">
         <div class="wechat-profile">
           <div class="wechat-avatar"><img src="assets/wechat-avatar.png" alt="微信头像" /></div>
