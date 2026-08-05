@@ -11,6 +11,9 @@
   --bg:#0a0a0a; --surface-1:#111; --surface-2:#171717;
   --ink:rgba(255,255,255,.96); --ink-dim:rgba(255,255,255,.68); --ink-soft:rgba(255,255,255,.5);
   --line:rgba(255,255,255,.12);
+  --glass-control:rgba(13,15,20,.58); --glass-control-hover:rgba(20,23,30,.68);
+  --glass-border:rgba(255,255,255,.14); --glass-border-hover:rgba(255,255,255,.22);
+  --glass-panel:rgba(12,14,18,.76); --blur-glass:22px;
   --container:min(1280px, calc(100vw - 40px));
   --gutter:clamp(20px,4vw,40px);
   --section-space:clamp(88px,10vw,144px);
@@ -130,18 +133,13 @@ main,footer.page-footer{position:relative;z-index:1}
 .feature-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
 .feature-grid>*{min-width:0}
 .feature-card{
-  position:relative;isolation:isolate;border-radius:var(--radius-card);overflow:hidden;background:var(--surface-1);
-  border:1px solid var(--line);min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;
+  position:relative;isolation:isolate;border-radius:var(--radius-card);overflow:hidden;
+  border:1px solid var(--glass-border);min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;
+  background:radial-gradient(ellipse 72% 64% at 100% 0%,rgba(255,255,255,.07) 0%,transparent 70%),radial-gradient(ellipse 42% 34% at 8% -4%,rgba(255,255,255,.11),transparent 72%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.008) 58%),var(--glass-panel);
+  backdrop-filter:blur(26px) saturate(1.22);-webkit-backdrop-filter:blur(26px) saturate(1.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 1px 0 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(0,0,0,.2),0 28px 80px rgba(0,0,0,.32);
   transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;
 }
-.feature-card::after,.project-card::after,.other-card::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;
-  border:1px solid transparent;background:linear-gradient(118deg,rgba(255,255,255,.05),transparent 29%,rgba(145,177,255,.34) 54%,transparent 72%,rgba(255,255,255,.12)) border-box;
-  mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);mask-composite:exclude;
-  opacity:.48;transition:opacity .35s ease;
-}
-.feature-card:hover{transform:translateY(-4px);border-color:rgba(178,197,255,.28);box-shadow:0 22px 54px rgba(0,0,0,.32),0 0 30px rgba(113,146,255,.09)}
-.feature-card:hover::after,.project-card:hover::after,.other-card:hover::after{opacity:1}
 .feature-card.tall{min-height:640px}
 .feature-card .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
 .feature-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.05) 40%,rgba(10,10,10,.78))}
@@ -178,18 +176,19 @@ main,footer.page-footer{position:relative;z-index:1}
 .projects-header{width:var(--container);margin:0 auto 56px}
 .project-wrap{position:sticky;top:calc(60px + var(--stack,0px));padding:0 var(--gutter) 40px}
 .project-card{
-  position:relative;isolation:isolate;width:min(1280px,100%);margin:0 auto;border-radius:32px;border:1px solid var(--line);
-  background:linear-gradient(160deg,var(--accent-fade,rgba(255,255,255,.04)),transparent 55%),var(--surface-1);
-  box-shadow:0 -12px 44px rgba(0,0,0,.45);transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;
+  position:relative;isolation:isolate;width:min(1280px,100%);margin:0 auto;border-radius:32px;border:1px solid var(--glass-border);
+  background:radial-gradient(ellipse 72% 64% at 100% 0%,var(--accent-fade,rgba(255,255,255,.07)) 0%,transparent 70%),radial-gradient(ellipse 42% 34% at 8% -4%,rgba(255,255,255,.11),transparent 72%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.008) 58%),var(--glass-panel);
+  backdrop-filter:blur(26px) saturate(1.22);-webkit-backdrop-filter:blur(26px) saturate(1.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 1px 0 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(0,0,0,.2),0 28px 80px rgba(0,0,0,.32);transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;
   display:grid;grid-template-columns:1fr 1.15fr;gap:40px;padding:clamp(28px,4vw,56px);min-height:520px;
 }
-.project-card:hover{transform:translateY(-3px);border-color:rgba(192,208,255,.3);box-shadow:0 -12px 44px rgba(0,0,0,.42),0 18px 46px rgba(110,142,255,.12)}
+.project-card:hover,.feature-card:hover,.other-card:hover{transform:none;border-color:var(--glass-border-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(0,0,0,.16),0 34px 96px rgba(0,0,0,.4)}
 .project-copy{display:flex;flex-direction:column;justify-content:space-between;gap:28px}
 .project-name{font-size:clamp(30px,3.4vw,48px);font-weight:800;line-height:1.12;margin-bottom:18px}
 .project-desc{color:var(--ink-dim);font-size:clamp(14px,1.3vw,17px);line-height:1.7;max-width:480px}
 .project-meta{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
 .project-meta span{padding:6px 10px;font-size:12px;border-radius:8px}
-.project-meta .glass:hover,.profile-tags .glass:hover,.tool-tile:hover,.advantage-tag:hover{transform:none;border-color:transparent;box-shadow:0 8px 24px rgba(0,0,0,.16)}
+.project-meta .glass:hover,.profile-tags .glass:hover,.tool-tile:hover,.advantage-tag:hover{transform:none}
 .live-button{align-self:flex-start;width:148px;height:40px;padding:0;justify-content:center;font-size:14px;display:inline-flex;gap:8px;align-items:center}
 .project-visual{display:flex;flex-direction:column;gap:22px}
 .project-image{border-radius:var(--radius-media);overflow:hidden;flex:1;border:1px solid var(--accent-border,var(--line));padding:0;text-align:left}
@@ -204,11 +203,16 @@ main,footer.page-footer{position:relative;z-index:1}
 .other-projects{width:var(--container);margin:0 auto;padding:var(--section-space) 0}
 .other-filter{display:flex;gap:10px;margin:34px 0 30px;flex-wrap:wrap}
 .other-filter button{padding:10px 22px;font-size:14px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);transition:all .2s}
-.other-filter button.active,.other-filter button:hover{color:var(--ink);border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06)}
+.profile-tags span,.project-meta span,.tool-tile,.advantage-tag,.other-filter button{
+  color:var(--ink);border-color:rgba(255,255,255,.13);
+  background:radial-gradient(circle at 24% -16%,rgba(255,255,255,.1),transparent 34%),linear-gradient(150deg,rgba(255,255,255,.055),rgba(255,255,255,.01) 58%),var(--glass-control);
+  backdrop-filter:blur(var(--blur-glass)) saturate(1.35);-webkit-backdrop-filter:blur(var(--blur-glass)) saturate(1.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 28px rgba(0,0,0,.26);
+}
+.other-filter button.active,.other-filter button:hover{color:#fff;border-color:rgba(255,255,255,.2);background:radial-gradient(circle at 24% -16%,rgba(255,255,255,.16),transparent 36%),linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.018) 58%),var(--glass-control-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.23),inset 0 -1px 0 rgba(255,255,255,.035),0 20px 52px rgba(0,0,0,.38)}
 .other-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.other-card{position:relative;isolation:isolate;border-radius:var(--radius-media);overflow:hidden;border:1px solid var(--line);aspect-ratio:3/2;padding:0;background:var(--surface-1);transition:opacity .3s,transform .35s ease,border-color .35s ease,box-shadow .35s ease}
+.other-card{position:relative;isolation:isolate;border-radius:var(--radius-media);overflow:hidden;border:1px solid var(--glass-border);aspect-ratio:3/2;padding:0;background:radial-gradient(ellipse 72% 64% at 100% 0%,rgba(255,255,255,.07) 0%,transparent 70%),radial-gradient(ellipse 42% 34% at 8% -4%,rgba(255,255,255,.11),transparent 72%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.008) 58%),var(--glass-panel);backdrop-filter:blur(26px) saturate(1.22);-webkit-backdrop-filter:blur(26px) saturate(1.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 1px 0 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(0,0,0,.2),0 28px 80px rgba(0,0,0,.32);transition:opacity .3s,transform .35s ease,border-color .35s ease,box-shadow .35s ease}
 .other-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.other-card:hover{transform:translateY(-4px);border-color:rgba(184,203,255,.3);box-shadow:0 18px 38px rgba(0,0,0,.3),0 0 24px rgba(111,145,255,.1)}
 .other-card:hover img{transform:scale(1.04)}
 .other-card.hidden{display:none}
 
