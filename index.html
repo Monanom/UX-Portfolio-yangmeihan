@@ -47,16 +47,16 @@ main,footer.page-footer{position:relative;z-index:1}
 }
 /* 主按钮：静态斜向雾光；悬停时只加深光感，不使用扫光动画。 */
 :is(a,button).glass{
-  border:1px solid transparent;
-  background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(10,11,14,.64) 72%) padding-box,
-    linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.1)) border-box;
-  box-shadow:0 10px 26px rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.045);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  box-shadow:none;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
 }
 :is(a,button).glass:hover{
-  border-color:transparent;transform:translateY(-1px);
-  background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(10,11,14,.64) 72%) padding-box,
-    linear-gradient(90deg,rgba(255,255,255,.86),rgba(255,255,255,.2)) border-box;
-  box-shadow:0 12px 30px rgba(143,166,255,.17);
+  border-color:rgba(255,255,255,.24);transform:translateY(-1px);
+  background:rgba(255,255,255,.09);
+  box-shadow:none;
 }
 /* ---- 首屏 ---- */
 .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;z-index:1}
