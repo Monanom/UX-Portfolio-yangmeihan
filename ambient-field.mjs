@@ -81,14 +81,58 @@ function stepParticles(particles, elapsed, width, height){
   });
 }
 
+function shouldEnableCursorStarlight(width, finePointer, hover, reducedMotion){
+  return width > 900 && finePointer && hover && !reducedMotion;
+}
+
+function createCursorSpark(x, y, seed = Date.now()){
+  const random = seededRandom(seed);
+  const angle = random() * Math.PI * 2;
+  const distance = 14 + random() * 22;
+  const directionX = Math.cos(angle);
+  const directionY = Math.sin(angle);
+  const peakAlpha = .36 + random() * .48;
+  return {
+    x: x + directionX * distance,
+    y: y + directionY * distance,
+    vx: directionX * (.008 + random() * .022),
+    vy: directionY * (.008 + random() * .022) - .006,
+    radius: .45 + random() * 1.1,
+    life: 450 + random() * 330,
+    age: 0,
+    alpha: peakAlpha,
+    peakAlpha,
+    cross: random() < .2,
+    color: random() < .28 ? '#91a8ff' : '#e8edff',
+  };
+}
+
+function stepCursorSparks(sparks, elapsed){
+  return sparks.map(spark => {
+    const age = spark.age + elapsed;
+    const remaining = Math.max(0, 1 - age / spark.life);
+    return {
+      ...spark,
+      x: spark.x + spark.vx * elapsed,
+      y: spark.y + spark.vy * elapsed,
+      age,
+      alpha: spark.peakAlpha * remaining * remaining,
+    };
+  }).filter(spark => spark.age < spark.life).slice(-12);
+}
+
 function startAmbientField(){
   const canvas = document.getElementById('dotField');
+  const cursorCanvas = document.getElementById('cursorStarlight');
   const footer = document.getElementById('contact');
   const hero = document.getElementById('top');
   if(!canvas || !footer || !hero) return;
 
   const context = canvas.getContext('2d');
+  const cursorContext = cursorCanvas?.getContext('2d');
   const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+  const finePointerQuery = matchMedia('(pointer: fine)');
+  const hoverQuery = matchMedia('(hover: hover)');
   let width = 0;
   let height = 0;
   let stars = [];
@@ -96,19 +140,39 @@ function startAmbientField(){
   let particleHeight = 0;
   let frame = 0;
   let previousTime = 0;
+  let cursorSparks = [];
+  let lastPointer = null;
+  let sparkSeed = 1;
+
+  function cursorStarlightEnabled(){
+    return Boolean(cursorContext) && shouldEnableCursorStarlight(
+      width,
+      finePointerQuery.matches,
+      hoverQuery.matches,
+      motionQuery.matches,
+    );
+  }
+
+  function resizeCanvas(targetCanvas, targetContext, density){
+    if(!targetCanvas || !targetContext) return;
+    targetCanvas.width = Math.round(width * density);
+    targetCanvas.height = Math.round(height * density);
+    targetCanvas.style.width = `${width}px`;
+    targetCanvas.style.height = `${height}px`;
+    targetContext.setTransform(density, 0, 0, density, 0, 0);
+  }
 
   function resize(){
     width = innerWidth;
     height = innerHeight;
     const density = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * density);
-    canvas.height = Math.round(height * density);
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    context.setTransform(density, 0, 0, density, 0, 0);
+    resizeCanvas(canvas, context, density);
+    resizeCanvas(cursorCanvas, cursorContext, density);
     stars = createStarsForViewport(width, height);
     particleHeight = Math.max(footer.offsetHeight, 560);
     particles = createParticlesForViewport(width, particleHeight);
+    cursorSparks = [];
+    lastPointer = null;
     render(performance.now(), 0, true);
   }
 
@@ -132,6 +196,42 @@ function startAmbientField(){
     context.fill();
   }
 
+  function drawCursorSpark(spark){
+    if(!cursorContext) return;
+    cursorContext.save();
+    cursorContext.globalCompositeOperation = 'lighter';
+    cursorContext.fillStyle = spark.color;
+    cursorContext.globalAlpha = spark.alpha * .16;
+    cursorContext.beginPath();
+    cursorContext.arc(spark.x, spark.y, spark.radius * 4, 0, Math.PI * 2);
+    cursorContext.fill();
+    cursorContext.globalAlpha = spark.alpha;
+    cursorContext.beginPath();
+    cursorContext.arc(spark.x, spark.y, spark.radius, 0, Math.PI * 2);
+    cursorContext.fill();
+    if(spark.cross){
+      const ray = spark.radius * 3.6;
+      cursorContext.strokeStyle = spark.color;
+      cursorContext.lineWidth = .6;
+      cursorContext.globalAlpha = spark.alpha * .66;
+      cursorContext.beginPath();
+      cursorContext.moveTo(spark.x - ray, spark.y);
+      cursorContext.lineTo(spark.x + ray, spark.y);
+      cursorContext.moveTo(spark.x, spark.y - ray);
+      cursorContext.lineTo(spark.x, spark.y + ray);
+      cursorContext.stroke();
+    }
+    cursorContext.restore();
+  }
+
+  function renderCursorSparks(elapsed, staticFrame){
+    if(!cursorContext) return;
+    cursorContext.clearRect(0, 0, width, height);
+    if(staticFrame || !cursorStarlightEnabled()) return;
+    cursorSparks = stepCursorSparks(cursorSparks, elapsed);
+    cursorSparks.forEach(drawCursorSpark);
+  }
+
   function render(time, elapsed, staticFrame = false){
     context.clearRect(0, 0, width, height);
     const heroBottom = hero.getBoundingClientRect().bottom;
@@ -149,6 +249,7 @@ function startAmbientField(){
     }
     context.restore();
     context.globalAlpha = 1;
+    renderCursorSparks(elapsed, staticFrame);
   }
 
   function animate(time){
@@ -163,6 +264,11 @@ function startAmbientField(){
   function syncMotion(){
     cancelAnimationFrame(frame);
     previousTime = 0;
+    if(document.hidden || motionQuery.matches){
+      cursorSparks = [];
+      lastPointer = null;
+      cursorContext?.clearRect(0, 0, width, height);
+    }
     if(motionQuery.matches){
       render(performance.now(), 0, true);
     }else if(!document.hidden){
@@ -170,12 +276,42 @@ function startAmbientField(){
     }
   }
 
+  function syncCursorPolicy(){
+    if(cursorStarlightEnabled()) return;
+    cursorSparks = [];
+    lastPointer = null;
+    cursorContext?.clearRect(0, 0, width, height);
+  }
+
+  function handlePointerMove(event){
+    if(!cursorStarlightEnabled()){
+      lastPointer = null;
+      return;
+    }
+    const pointer = { x: event.clientX, y: event.clientY };
+    if(!lastPointer){
+      cursorSparks = [...cursorSparks, createCursorSpark(pointer.x, pointer.y, sparkSeed++)].slice(-12);
+      lastPointer = pointer;
+      return;
+    }
+    const distance = Math.hypot(pointer.x - lastPointer.x, pointer.y - lastPointer.y);
+    if(distance < 10) return;
+    const count = distance >= 28 ? 2 : 1;
+    const additions = Array.from({ length: count }, () => createCursorSpark(pointer.x, pointer.y, sparkSeed++));
+    cursorSparks = [...cursorSparks, ...additions].slice(-12);
+    lastPointer = pointer;
+  }
+
   addEventListener('resize', resize, { passive: true });
+  addEventListener('pointermove', handlePointerMove, { passive: true });
+  addEventListener('pointerleave', () => { lastPointer = null; }, { passive: true });
   addEventListener('scroll', () => {
     if(motionQuery.matches) render(performance.now(), 0, true);
   }, { passive: true });
   document.addEventListener('visibilitychange', syncMotion);
   motionQuery.addEventListener?.('change', syncMotion);
+  finePointerQuery.addEventListener?.('change', syncCursorPolicy);
+  hoverQuery.addEventListener?.('change', syncCursorPolicy);
   resize();
   syncMotion();
 }
@@ -185,7 +321,10 @@ globalThis.AmbientField = {
   createParticlesForViewport,
   createStars,
   createStarsForViewport,
+  createCursorSpark,
+  shouldEnableCursorStarlight,
   starGroupIntensity,
+  stepCursorSparks,
   stepParticles,
 };
 

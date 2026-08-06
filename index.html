@@ -34,6 +34,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* ---- 背景点阵画布 ---- */
 .dot-field{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cursor-starlight{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media (max-width:900px),(hover:none),(pointer:coarse){.cursor-starlight{display:none}}
 main,footer.page-footer{position:relative;z-index:1}
 main{isolation:isolate}
 main::before{
@@ -290,6 +292,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
 </head>
 <body>
 <canvas class="dot-field" id="dotField" aria-hidden="true"></canvas>
+<canvas class="cursor-starlight" id="cursorStarlight" aria-hidden="true"></canvas>
 
 <header class="hero" id="top">
   <div class="hero-bg"><img src="assets/hero-poster.jpg" alt="" /></div>

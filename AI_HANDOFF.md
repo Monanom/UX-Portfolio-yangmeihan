@@ -10,6 +10,7 @@
 - 改项目封面、头像、二维码：替换 `assets/` 中同名文件，保持原有文件名和格式。
 - 改正文轨道、蓝紫光效和底部光晕：调整 `index.html` 中的 `main::before` 与 `.footer-cta::before`；背景图片位于 `assets/backgrounds/`。
 - 改星点数量、明暗或上升速度：编辑 `ambient-field.mjs`。它以普通脚本方式加载，支持直接双击 `index.html` 预览；会自动适配手机，并在“减少动态效果”开启时停止动画。
+- 改鼠标跟随星光：编辑 `ambient-field.mjs` 中的 `createCursorSpark`、`stepCursorSparks` 与 `handlePointerMove`；覆盖画布为 `index.html` 中的 `#cursorStarlight`。该效果只在宽度大于 900px 的桌面精细指针上启用。
 - 改项目详情：当前抽屉会重复使用项目封面；若要完善，应为每个项目补充独立的详情文案和多张图片，而不是虚构业务数据。
 
 ## 真实性边界

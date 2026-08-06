@@ -22,6 +22,41 @@ test('桌面联系区按视口扣除页脚后垂直居中', async () => {
   assert.match(html, /\.footer-cta\s*\{[^}]*justify-content:center/s);
 });
 
+test('鼠标星光画布覆盖页面但不拦截交互', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+
+  assert.match(html, /<canvas class="cursor-starlight" id="cursorStarlight" aria-hidden="true"><\/canvas>/);
+  assert.match(html, /\.cursor-starlight\{[^}]*position:fixed[^}]*pointer-events:none[^}]*z-index:50/s);
+});
+
+test('鼠标星光只在桌面精细指针和正常动态模式启用', () => {
+  assert.equal(typeof ambient.shouldEnableCursorStarlight, 'function');
+  assert.equal(ambient.shouldEnableCursorStarlight(1440, true, true, false), true);
+  assert.equal(ambient.shouldEnableCursorStarlight(900, true, true, false), false);
+  assert.equal(ambient.shouldEnableCursorStarlight(1440, false, true, false), false);
+  assert.equal(ambient.shouldEnableCursorStarlight(1440, true, false, false), false);
+  assert.equal(ambient.shouldEnableCursorStarlight(1440, true, true, true), false);
+});
+
+test('鼠标星光散落在光标周围并在限定时间内淡出', () => {
+  assert.equal(typeof ambient.createCursorSpark, 'function');
+  assert.equal(typeof ambient.stepCursorSparks, 'function');
+  const sparks = Array.from({ length: 20 }, (_, index) => ambient.createCursorSpark(320, 240, index + 1));
+
+  for(const spark of sparks){
+    const distance = Math.hypot(spark.x - 320, spark.y - 240);
+    assert.ok(distance >= 14 && distance <= 36);
+    assert.ok(spark.life >= 450 && spark.life <= 780);
+    assert.ok(spark.radius >= .45 && spark.radius <= 1.55);
+  }
+
+  const stepped = ambient.stepCursorSparks(sparks, 200);
+  assert.equal(stepped.length, 12);
+  assert.ok(stepped.every(spark => spark.age === 200));
+  assert.ok(stepped.every(spark => spark.alpha < spark.peakAlpha));
+  assert.equal(ambient.stepCursorSparks(stepped, 800).length, 0);
+});
+
 test('桌面和手机视口使用更克制的星点数量', () => {
   assert.equal(typeof ambient.createStarsForViewport, 'function');
   assert.equal(ambient.createStarsForViewport(1440, 900, 20260805).length, 40);
