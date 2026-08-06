@@ -69,6 +69,39 @@ test('底部粒子在桌面为 10 颗，手机进一步精简', () => {
   assert.equal(ambient.createParticlesForViewport(390, 600, 8086).length, 8);
 });
 
+test('底部微粒比主粒子更小、更亮且整体上升更快', () => {
+  assert.equal(typeof ambient.createMicroParticlesForViewport, 'function');
+  const main = ambient.createParticles(1440, 600, 12, 8086);
+  const micro = ambient.createMicroParticlesForViewport(1440, 600, 8087);
+  const mobileMicro = ambient.createMicroParticlesForViewport(390, 600, 8087);
+
+  assert.equal(micro.length, 12);
+  assert.equal(mobileMicro.length, 8);
+  assert.ok(micro.every(particle => particle.micro === true));
+  assert.ok(micro.every(particle => particle.radius >= .18 && particle.radius <= .5));
+  assert.ok(micro.every(particle => particle.radius < Math.min(...main.map(item => item.radius))));
+  assert.ok(micro.every(particle => particle.alpha >= .62 && particle.alpha <= .96));
+  assert.ok(
+    micro.reduce((total, particle) => total + particle.speed, 0) / micro.length
+    > main.reduce((total, particle) => total + particle.speed, 0) / main.length,
+  );
+  assert.ok(micro.every(particle => particle.x >= 1440 * .29 && particle.x <= 1440 * .71));
+  assert.ok(stepParticles(micro, 100000, 1440, 600).every(
+    particle => particle.x >= 1440 * .29 && particle.x <= 1440 * .71,
+  ));
+});
+
+test('背景星点光晕比核心更大且更淡', () => {
+  assert.equal(typeof ambient.starGlowStyle, 'function');
+  const star = createStars(900, 600, 1, 42)[0];
+  const style = ambient.starGlowStyle(star, .8);
+
+  assert.ok(style.haloRadius >= star.radius * 3);
+  assert.ok(style.haloRadius <= star.radius * 4);
+  assert.ok(style.haloAlpha > 0);
+  assert.ok(style.haloAlpha < style.coreAlpha);
+});
+
 test('同一尺寸和种子会生成稳定、分区且层次不同的星点', () => {
   const first = createStars(1440, 900, 40, 20260805);
   const second = createStars(1440, 900, 40, 20260805);

@@ -30,7 +30,7 @@
 - Produces: `createMicroParticlesForViewport(width, height, seed)` 返回桌面 12 颗或手机 8 颗微粒。
 - Consumes: 现有 `seededRandom` 与 `stepParticles`。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 test('底部微粒比主粒子更小更亮且略快', () => {
@@ -44,13 +44,13 @@ test('底部微粒比主粒子更小更亮且略快', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/ambient-field.test.mjs`
 
 Expected: FAIL，因为 `createMicroParticlesForViewport` 尚未定义。
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 function createMicroParticles(width, height, count, seed = 8087){
@@ -73,7 +73,7 @@ function createMicroParticlesForViewport(width, height, seed = 8087){
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/ambient-field.test.mjs`
 
@@ -89,7 +89,7 @@ Expected: 新增测试和原有测试全部 PASS。
 - Consumes: `createMicroParticlesForViewport(width, height, seed)`。
 - Produces: `starGlowStyle(star, intensity)` 返回 `{ coreAlpha, haloAlpha, haloRadius }`，供绘制与测试共同使用。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 test('背景星点光晕比核心更大且更淡', () => {
@@ -102,13 +102,13 @@ test('背景星点光晕比核心更大且更淡', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/ambient-field.test.mjs`
 
 Expected: FAIL，因为 `starGlowStyle` 尚未定义。
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```js
 function starGlowStyle(star, intensity){
@@ -119,7 +119,7 @@ function starGlowStyle(star, intensity){
 
 在 `resize()` 创建 `microParticles`；在底部可见时与主粒子分别调用 `stepParticles`。`drawStar` 先使用浅蓝径向渐变画外晕再画核心；`drawParticle` 根据 `particle.micro` 为微粒绘制更窄的浅蓝外晕和更亮核心。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/ambient-field.test.mjs && node --check ambient-field.mjs && git diff --check`
 
@@ -135,19 +135,19 @@ Expected: 全部检查通过。
 - Consumes: 最终 Canvas 页面效果。
 - Produces: 可供下一位 AI 继续调整的参数说明和验收记录。
 
-- [ ] **Step 1: Verify desktop behavior**
+- [x] **Step 1: Verify desktop behavior**
 
 在桌面预览中检查项目区背景星点带淡蓝外晕，底部联系区同时存在柔和主粒子与锐亮微粒；确认按钮仍能点击，控制台无页面自身错误。
 
-- [ ] **Step 2: Verify mobile and reduced-motion behavior**
+- [x] **Step 2: Verify mobile and reduced-motion behavior**
 
 在 390 × 844 检查无横向滚动，微粒数量为 8；启用减少动态效果后粒子位置保持静态。
 
-- [ ] **Step 3: Record QA and handoff**
+- [x] **Step 3: Record QA and handoff**
 
 在 `design-qa.md` 记录桌面、手机、控制台和动态降级结果；在 `AI_HANDOFF.md` 记录光晕及微粒的调整入口。
 
-- [ ] **Step 4: Run final verification and commit**
+- [x] **Step 4: Run final verification and commit**
 
 Run: `node --test tests/ambient-field.test.mjs && node --check ambient-field.mjs && git diff --check`
 

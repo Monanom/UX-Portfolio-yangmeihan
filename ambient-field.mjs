@@ -62,23 +62,55 @@ function createParticlesForViewport(width, height, seed = 8086){
   return createParticles(width, height, width <= 560 ? 8 : 10, seed);
 }
 
+function createMicroParticles(width, height, count, seed = 8087){
+  const random = seededRandom(seed + Math.round(width) * 23 + Math.round(height) * 29);
+  return Array.from({ length: count }, (_, index) => ({
+    x: width * (.29 + random() * .42),
+    y: random() * height,
+    radius: .18 + random() * .32,
+    alpha: .62 + random() * .34,
+    speed: .028 + random() * .018,
+    drift: (random() - .5) * .005,
+    phase: random() * Math.PI * 2,
+    cycle: index,
+    rangeMin: .29,
+    rangeMax: .71,
+    micro: true,
+  }));
+}
+
+function createMicroParticlesForViewport(width, height, seed = 8087){
+  return createMicroParticles(width, height, width <= 560 ? 8 : 12, seed);
+}
+
 function stepParticles(particles, elapsed, width, height){
   return particles.map(particle => {
+    const rangeMin = particle.rangeMin ?? .26;
+    const rangeMax = particle.rangeMax ?? .74;
     if(particle.y < -particle.radius * 4){
       const random = seededRandom(90210 + particle.cycle * 101 + Math.round(width));
       return {
         ...particle,
-        x: width * (.26 + random() * .48),
+        x: width * (rangeMin + random() * (rangeMax - rangeMin)),
         y: height + random() * Math.min(120, height * .22),
         cycle: particle.cycle + particles.length,
       };
     }
     return {
       ...particle,
-      x: Math.max(width * .26, Math.min(width * .74, particle.x + particle.drift * elapsed)),
+      x: Math.max(width * rangeMin, Math.min(width * rangeMax, particle.x + particle.drift * elapsed)),
       y: particle.y - particle.speed * elapsed,
     };
   });
+}
+
+function starGlowStyle(star, intensity){
+  const coreAlpha = star.baseAlpha + (star.peakAlpha - star.baseAlpha) * intensity;
+  return {
+    coreAlpha,
+    haloAlpha: coreAlpha * .14,
+    haloRadius: star.radius * 3.6,
+  };
 }
 
 function shouldEnableCursorStarlight(width, finePointer, hover, reducedMotion){
@@ -137,6 +169,7 @@ function startAmbientField(){
   let height = 0;
   let stars = [];
   let particles = [];
+  let microParticles = [];
   let particleHeight = 0;
   let frame = 0;
   let previousTime = 0;
@@ -171,6 +204,7 @@ function startAmbientField(){
     stars = createStarsForViewport(width, height);
     particleHeight = Math.max(footer.offsetHeight, 560);
     particles = createParticlesForViewport(width, particleHeight);
+    microParticles = createMicroParticlesForViewport(width, particleHeight);
     cursorSparks = [];
     lastPointer = null;
     render(performance.now(), 0, true);
@@ -178,18 +212,45 @@ function startAmbientField(){
 
   function drawStar(star, time, staticFrame){
     const intensity = starGroupIntensity(star.group, time, staticFrame);
-    context.globalAlpha = star.baseAlpha + (star.peakAlpha - star.baseAlpha) * intensity;
+    const style = starGlowStyle(star, intensity);
+    context.save();
+    context.globalCompositeOperation = 'lighter';
+    context.globalAlpha = style.haloAlpha;
+    context.fillStyle = '#7698ff';
+    context.beginPath();
+    context.arc(star.x, star.y, style.haloRadius, 0, Math.PI * 2);
+    context.fill();
+    context.globalAlpha = style.coreAlpha;
     context.fillStyle = '#d7e1ff';
     context.beginPath();
     context.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
     context.fill();
+    context.restore();
   }
 
   function drawParticle(particle, footerRect, time, staticFrame){
     const screenY = footerRect.top + particle.y;
     if(screenY < -8 || screenY > height + 8) return;
-    const shimmer = staticFrame ? 0 : Math.sin(time * .001 + particle.phase) * .12;
-    context.globalAlpha = Math.max(.08, Math.min(.9, particle.alpha + shimmer));
+    const shimmerRange = particle.micro ? .08 : .12;
+    const shimmer = staticFrame ? 0 : Math.sin(time * .001 + particle.phase) * shimmerRange;
+    const alpha = Math.max(.08, Math.min(.96, particle.alpha + shimmer));
+    if(particle.micro){
+      context.save();
+      context.globalCompositeOperation = 'lighter';
+      context.globalAlpha = alpha * .2;
+      context.fillStyle = '#7698ff';
+      context.beginPath();
+      context.arc(particle.x, screenY, particle.radius * 2.6, 0, Math.PI * 2);
+      context.fill();
+      context.globalAlpha = alpha;
+      context.fillStyle = '#f2f5ff';
+      context.beginPath();
+      context.arc(particle.x, screenY, particle.radius, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+      return;
+    }
+    context.globalAlpha = alpha;
     context.fillStyle = '#e8edff';
     context.beginPath();
     context.arc(particle.x, screenY, particle.radius, 0, Math.PI * 2);
@@ -244,8 +305,12 @@ function startAmbientField(){
     const footerRect = footer.getBoundingClientRect();
     const footerVisible = footerRect.bottom > 0 && footerRect.top < height;
     if(footerVisible){
-      if(!staticFrame) particles = stepParticles(particles, elapsed, width, particleHeight);
+      if(!staticFrame){
+        particles = stepParticles(particles, elapsed, width, particleHeight);
+        microParticles = stepParticles(microParticles, elapsed, width, particleHeight);
+      }
       particles.forEach(particle => drawParticle(particle, footerRect, time, staticFrame));
+      microParticles.forEach(particle => drawParticle(particle, footerRect, time, staticFrame));
     }
     context.restore();
     context.globalAlpha = 1;
@@ -317,12 +382,15 @@ function startAmbientField(){
 }
 
 globalThis.AmbientField = {
+  createMicroParticles,
+  createMicroParticlesForViewport,
   createParticles,
   createParticlesForViewport,
   createStars,
   createStarsForViewport,
   createCursorSpark,
   shouldEnableCursorStarlight,
+  starGlowStyle,
   starGroupIntensity,
   stepCursorSparks,
   stepParticles,
