@@ -16,8 +16,8 @@ test('首页使用可在 file 协议下加载的普通脚本', async () => {
 
 test('桌面和手机视口使用更克制的星点数量', () => {
   assert.equal(typeof ambient.createStarsForViewport, 'function');
-  assert.equal(ambient.createStarsForViewport(1440, 900, 20260805).length, 24);
-  assert.equal(ambient.createStarsForViewport(390, 844, 20260805).length, 14);
+  assert.equal(ambient.createStarsForViewport(1440, 900, 20260805).length, 40);
+  assert.equal(ambient.createStarsForViewport(390, 844, 20260805).length, 22);
 });
 
 test('底部粒子在桌面为 10 颗，手机进一步精简', () => {
@@ -26,23 +26,37 @@ test('底部粒子在桌面为 10 颗，手机进一步精简', () => {
   assert.equal(ambient.createParticlesForViewport(390, 600, 8086).length, 8);
 });
 
-test('同一尺寸和种子会生成稳定且明暗大小不同的星点', () => {
-  const first = createStars(1440, 900, 24, 20260805);
-  const second = createStars(1440, 900, 24, 20260805);
+test('同一尺寸和种子会生成稳定、分区且层次不同的星点', () => {
+  const first = createStars(1440, 900, 40, 20260805);
+  const second = createStars(1440, 900, 40, 20260805);
 
   assert.deepEqual(first, second);
-  assert.equal(first.length, 24);
+  assert.equal(first.length, 40);
   assert.ok(new Set(first.map(star => star.radius)).size >= 8);
-  assert.ok(Math.min(...first.map(star => star.alpha)) < 0.2);
-  assert.ok(Math.max(...first.map(star => star.alpha)) > 0.7);
+  assert.ok(first.every(star => star.baseAlpha < star.peakAlpha));
+  assert.ok(Math.min(...first.map(star => star.baseAlpha)) < 0.05);
+  assert.ok(Math.max(...first.map(star => star.peakAlpha)) > 0.75);
   assert.ok(first.every(star => star.x >= 0 && star.x <= 1440));
   assert.ok(first.every(star => star.y >= 0 && star.y <= 900));
-  const twinkling = first.filter(star => star.twinkle > 0).length;
-  assert.ok(twinkling >= 8 && twinkling <= 16);
-  const twinklePeriods = first
-    .filter(star => star.twinkle > 0)
-    .map(star => Math.PI * 2 / star.speed / 1000);
-  assert.ok(twinklePeriods.every(period => period >= 3 && period <= 7));
+  assert.deepEqual(new Set(first.map(star => star.group)), new Set([0, 1, 2, 3]));
+  assert.ok(first.filter(star => star.group === 0).every(star => star.x <= 720 && star.y <= 450));
+  assert.ok(first.filter(star => star.group === 3).every(star => star.x >= 720 && star.y >= 450));
+});
+
+test('四组星点每 1.7 秒平滑接力且不会同时亮起', () => {
+  assert.equal(typeof ambient.starGroupIntensity, 'function');
+  const atStart = [0, 1, 2, 3].map(group => ambient.starGroupIntensity(group, 0, false));
+  const atHandoff = [0, 1, 2, 3].map(group => ambient.starGroupIntensity(group, 850, false));
+  const atNext = [0, 1, 2, 3].map(group => ambient.starGroupIntensity(group, 1700, false));
+
+  assert.deepEqual(atStart, [1, 0, 0, 0]);
+  assert.deepEqual(atHandoff, [.5, .5, 0, 0]);
+  assert.deepEqual(atNext, [0, 1, 0, 0]);
+  assert.ok(atHandoff.filter(value => value > 0).length <= 2);
+  assert.deepEqual(
+    [0, 1, 2, 3].map(group => ambient.starGroupIntensity(group, 5000, true)),
+    [.72, 0, 0, 0],
+  );
 });
 
 test('底部粒子集中在中央并在越界后从中央底部重新出现', () => {

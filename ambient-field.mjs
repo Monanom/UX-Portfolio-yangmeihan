@@ -11,24 +11,37 @@ function seededRandom(seed){
 
 function createStars(width, height, count, seed = 20260805){
   const random = seededRandom(seed + Math.round(width) * 17 + Math.round(height) * 31);
-  const slowestTwinkle = Math.PI * 2 / 7000;
-  const fastestTwinkle = Math.PI * 2 / 3000;
-  return Array.from({ length: count }, () => {
-    const animated = random() < .5;
+  return Array.from({ length: count }, (_, index) => {
+    const group = index % 4;
+    const column = group % 2;
+    const row = Math.floor(group / 2);
     return {
-      x: Math.round(random() * width * 100) / 100,
-      y: Math.round(random() * height * 100) / 100,
+      x: Math.round(((column + random()) * width / 2) * 100) / 100,
+      y: Math.round(((row + random()) * height / 2) * 100) / 100,
       radius: Math.round((.45 + random() * 1.75) * 100) / 100,
-      alpha: Math.round((.06 + random() * .8) * 100) / 100,
-      phase: random() * Math.PI * 2,
-      twinkle: animated ? .04 + random() * .18 : 0,
-      speed: slowestTwinkle + random() * (fastestTwinkle - slowestTwinkle),
+      baseAlpha: Math.round((.018 + random() * .052) * 1000) / 1000,
+      peakAlpha: Math.round((.44 + random() * .46) * 1000) / 1000,
+      group,
     };
   });
 }
 
 function createStarsForViewport(width, height, seed = 20260805){
-  return createStars(width, height, width <= 560 ? 14 : 24, seed);
+  return createStars(width, height, width <= 560 ? 22 : 40, seed);
+}
+
+function starGroupIntensity(group, time, staticFrame = false){
+  if(staticFrame) return group === 0 ? .72 : 0;
+  const groupDuration = 1700;
+  const groupCount = 4;
+  const cyclePosition = ((time / groupDuration) % groupCount + groupCount) % groupCount;
+  const currentGroup = Math.floor(cyclePosition);
+  const nextGroup = (currentGroup + 1) % groupCount;
+  const progress = cyclePosition - currentGroup;
+  const eased = progress * progress * (3 - 2 * progress);
+  if(group === currentGroup) return 1 - eased;
+  if(group === nextGroup) return eased;
+  return 0;
 }
 
 function createParticles(width, height, count, seed = 8086){
@@ -100,8 +113,8 @@ function startAmbientField(){
   }
 
   function drawStar(star, time, staticFrame){
-    const pulse = staticFrame ? 0 : Math.sin(time * star.speed + star.phase) * star.twinkle;
-    context.globalAlpha = Math.max(.03, Math.min(.92, star.alpha + pulse));
+    const intensity = starGroupIntensity(star.group, time, staticFrame);
+    context.globalAlpha = star.baseAlpha + (star.peakAlpha - star.baseAlpha) * intensity;
     context.fillStyle = '#d7e1ff';
     context.beginPath();
     context.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
@@ -172,6 +185,7 @@ globalThis.AmbientField = {
   createParticlesForViewport,
   createStars,
   createStarsForViewport,
+  starGroupIntensity,
   stepParticles,
 };
 

@@ -38,9 +38,13 @@ main,footer.page-footer{position:relative;z-index:1}
 main{isolation:isolate}
 main::before{
   content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
-  background-image:url("assets/backgrounds/lingma-content-desktop.png");
-  background-repeat:no-repeat;background-size:contain;
-  background-position:center clamp(700px,75vw,1080px);
+  background-image:
+    radial-gradient(ellipse 46% 480px at 10% 30%,rgba(50,82,255,.28),rgba(43,58,190,.12) 42%,transparent 76%),
+    radial-gradient(ellipse 48% 540px at 86% 36%,rgba(67,54,255,.22),rgba(35,52,170,.09) 46%,transparent 78%),
+    url("assets/backgrounds/lingma-content-desktop.png");
+  background-repeat:no-repeat;
+  background-size:100% 100%,100% 100%,contain;
+  background-position:center,center,center clamp(700px,75vw,1080px);
   opacity:.58;
 }
 
@@ -255,8 +259,11 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
 /* ---- 响应式 ---- */
 @media (max-width:900px){
   main::before{
-    background-image:url("assets/backgrounds/lingma-content-mobile.png");
-    background-position:center clamp(480px,110vw,720px);
+    background-image:
+      radial-gradient(ellipse 78% 360px at 12% 39%,rgba(50,82,255,.2),rgba(43,58,190,.08) 44%,transparent 78%),
+      radial-gradient(ellipse 82% 420px at 88% 48%,rgba(67,54,255,.16),rgba(35,52,170,.06) 48%,transparent 80%),
+      url("assets/backgrounds/lingma-content-mobile.png");
+    background-position:center,center,center clamp(480px,110vw,720px);
   }
   .footer-cta::before{
     inset:-12% -24% -72px;
