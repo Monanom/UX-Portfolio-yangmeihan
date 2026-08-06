@@ -11,21 +11,28 @@ function seededRandom(seed){
 
 export function createStars(width, height, count, seed = 20260805){
   const random = seededRandom(seed + Math.round(width) * 17 + Math.round(height) * 31);
-  return Array.from({ length: count }, () => ({
-    x: Math.round(random() * width * 100) / 100,
-    y: Math.round(random() * height * 100) / 100,
-    radius: Math.round((.45 + random() * 1.75) * 100) / 100,
-    alpha: Math.round((.06 + random() * .8) * 100) / 100,
-    phase: random() * Math.PI * 2,
-    twinkle: .04 + random() * .18,
-    speed: .00035 + random() * .00075,
-  }));
+  return Array.from({ length: count }, () => {
+    const animated = random() < .5;
+    return {
+      x: Math.round(random() * width * 100) / 100,
+      y: Math.round(random() * height * 100) / 100,
+      radius: Math.round((.45 + random() * 1.75) * 100) / 100,
+      alpha: Math.round((.06 + random() * .8) * 100) / 100,
+      phase: random() * Math.PI * 2,
+      twinkle: animated ? .04 + random() * .18 : 0,
+      speed: .00035 + random() * .00075,
+    };
+  });
+}
+
+export function createStarsForViewport(width, height, seed = 20260805){
+  return createStars(width, height, width <= 560 ? 22 : 40, seed);
 }
 
 export function createParticles(width, height, count, seed = 8086){
   const random = seededRandom(seed + Math.round(width) * 13 + Math.round(height) * 19);
   return Array.from({ length: count }, (_, index) => ({
-    x: random() * width,
+    x: width * (.26 + random() * .48),
     y: random() * height,
     radius: .55 + random() * 1.55,
     alpha: .14 + random() * .64,
@@ -42,14 +49,14 @@ export function stepParticles(particles, elapsed, width, height){
       const random = seededRandom(90210 + particle.cycle * 101 + Math.round(width));
       return {
         ...particle,
-        x: random() * width,
+        x: width * (.26 + random() * .48),
         y: height + random() * Math.min(120, height * .22),
         cycle: particle.cycle + particles.length,
       };
     }
     return {
       ...particle,
-      x: Math.max(0, Math.min(width, particle.x + particle.drift * elapsed)),
+      x: Math.max(width * .26, Math.min(width * .74, particle.x + particle.drift * elapsed)),
       y: particle.y - particle.speed * elapsed,
     };
   });
@@ -80,7 +87,7 @@ function startAmbientField(){
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     context.setTransform(density, 0, 0, density, 0, 0);
-    stars = createStars(width, height, width <= 560 ? 34 : 72);
+    stars = createStarsForViewport(width, height);
     particleHeight = Math.max(footer.offsetHeight, 560);
     particles = createParticles(width, particleHeight, width <= 560 ? 14 : 26);
     render(performance.now(), 0, true);
