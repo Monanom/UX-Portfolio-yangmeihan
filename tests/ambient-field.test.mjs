@@ -14,6 +14,14 @@ test('首页使用可在 file 协议下加载的普通脚本', async () => {
   assert.doesNotMatch(browserScript, /\bexport\s+(?:function|const|let|class)\b/);
 });
 
+test('桌面联系区按视口扣除页脚后垂直居中', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+
+  assert.match(html, /@media\s*\(min-width:901px\)/);
+  assert.match(html, /min-height:calc\(100svh - 96px\)/);
+  assert.match(html, /\.footer-cta\s*\{[^}]*justify-content:center/s);
+});
+
 test('桌面和手机视口使用更克制的星点数量', () => {
   assert.equal(typeof ambient.createStarsForViewport, 'function');
   assert.equal(ambient.createStarsForViewport(1440, 900, 20260805).length, 40);

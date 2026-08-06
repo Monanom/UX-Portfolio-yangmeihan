@@ -257,6 +257,13 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
 .case-gallery img{width:100%;border-radius:var(--radius-media);border:1px solid var(--line)}
 
 /* ---- 响应式 ---- */
+@media (min-width:901px){
+  .footer-cta{
+    min-height:calc(100svh - 96px);
+    justify-content:center;
+    padding:clamp(48px,7vh,72px) var(--gutter) clamp(36px,5vh,56px);
+  }
+}
 @media (max-width:900px){
   main::before{
     background-image:
