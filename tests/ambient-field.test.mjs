@@ -80,7 +80,7 @@ test('底部微粒比主粒子更小、更亮且整体上升更快', () => {
   assert.ok(micro.every(particle => particle.micro === true));
   assert.ok(micro.every(particle => particle.radius >= .18 && particle.radius <= .5));
   assert.ok(micro.every(particle => particle.radius < Math.min(...main.map(item => item.radius))));
-  assert.ok(micro.every(particle => particle.alpha >= .62 && particle.alpha <= .96));
+  assert.ok(micro.every(particle => particle.alpha >= .8 && particle.alpha <= 1));
   assert.ok(
     micro.reduce((total, particle) => total + particle.speed, 0) / micro.length
     > main.reduce((total, particle) => total + particle.speed, 0) / main.length,
@@ -100,6 +100,16 @@ test('背景星点光晕比核心更大且更淡', () => {
   assert.ok(style.haloRadius <= star.radius * 4);
   assert.ok(style.haloAlpha > 0);
   assert.ok(style.haloAlpha < style.coreAlpha);
+});
+
+test('柔光从中心向外连续衰减并在边缘完全透明', () => {
+  assert.equal(typeof ambient.softGlowStops, 'function');
+  const stops = ambient.softGlowStops(.4);
+
+  assert.deepEqual(stops.map(stop => stop.offset), [0, .42, 1]);
+  assert.equal(stops[0].alpha, .4);
+  assert.ok(stops[1].alpha > 0 && stops[1].alpha < stops[0].alpha);
+  assert.equal(stops.at(-1).alpha, 0);
 });
 
 test('同一尺寸和种子会生成稳定、分区且层次不同的星点', () => {

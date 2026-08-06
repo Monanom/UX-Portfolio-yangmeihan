@@ -68,7 +68,7 @@ function createMicroParticles(width, height, count, seed = 8087){
     x: width * (.29 + random() * .42),
     y: random() * height,
     radius: .18 + random() * .32,
-    alpha: .62 + random() * .34,
+    alpha: .8 + random() * .2,
     speed: .028 + random() * .018,
     drift: (random() - .5) * .005,
     phase: random() * Math.PI * 2,
@@ -111,6 +111,14 @@ function starGlowStyle(star, intensity){
     haloAlpha: coreAlpha * .14,
     haloRadius: star.radius * 3.6,
   };
+}
+
+function softGlowStops(alpha){
+  return [
+    { offset: 0, alpha },
+    { offset: .42, alpha: alpha * .38 },
+    { offset: 1, alpha: 0 },
+  ];
 }
 
 function shouldEnableCursorStarlight(width, finePointer, hover, reducedMotion){
@@ -215,11 +223,7 @@ function startAmbientField(){
     const style = starGlowStyle(star, intensity);
     context.save();
     context.globalCompositeOperation = 'lighter';
-    context.globalAlpha = style.haloAlpha;
-    context.fillStyle = '#7698ff';
-    context.beginPath();
-    context.arc(star.x, star.y, style.haloRadius, 0, Math.PI * 2);
-    context.fill();
+    drawSoftGlow(context, star.x, star.y, style.haloRadius, '118,152,255', style.haloAlpha);
     context.globalAlpha = style.coreAlpha;
     context.fillStyle = '#d7e1ff';
     context.beginPath();
@@ -228,20 +232,30 @@ function startAmbientField(){
     context.restore();
   }
 
+  function drawSoftGlow(targetContext, x, y, radius, color, alpha){
+    const gradient = targetContext.createRadialGradient(x, y, 0, x, y, radius);
+    softGlowStops(alpha).forEach(stop => {
+      gradient.addColorStop(stop.offset, `rgba(${color},${stop.alpha})`);
+    });
+    targetContext.save();
+    targetContext.globalAlpha = 1;
+    targetContext.fillStyle = gradient;
+    targetContext.beginPath();
+    targetContext.arc(x, y, radius, 0, Math.PI * 2);
+    targetContext.fill();
+    targetContext.restore();
+  }
+
   function drawParticle(particle, footerRect, time, staticFrame){
     const screenY = footerRect.top + particle.y;
     if(screenY < -8 || screenY > height + 8) return;
     const shimmerRange = particle.micro ? .08 : .12;
     const shimmer = staticFrame ? 0 : Math.sin(time * .001 + particle.phase) * shimmerRange;
-    const alpha = Math.max(.08, Math.min(.96, particle.alpha + shimmer));
+    const alpha = Math.max(.08, Math.min(1, particle.alpha + shimmer));
     if(particle.micro){
       context.save();
       context.globalCompositeOperation = 'lighter';
-      context.globalAlpha = alpha * .2;
-      context.fillStyle = '#7698ff';
-      context.beginPath();
-      context.arc(particle.x, screenY, particle.radius * 2.6, 0, Math.PI * 2);
-      context.fill();
+      drawSoftGlow(context, particle.x, screenY, particle.radius * 2.6, '118,152,255', alpha * .2);
       context.globalAlpha = alpha;
       context.fillStyle = '#f2f5ff';
       context.beginPath();
@@ -261,11 +275,8 @@ function startAmbientField(){
     if(!cursorContext) return;
     cursorContext.save();
     cursorContext.globalCompositeOperation = 'lighter';
+    drawSoftGlow(cursorContext, spark.x, spark.y, spark.radius * 4, '145,168,255', spark.alpha * .16);
     cursorContext.fillStyle = spark.color;
-    cursorContext.globalAlpha = spark.alpha * .16;
-    cursorContext.beginPath();
-    cursorContext.arc(spark.x, spark.y, spark.radius * 4, 0, Math.PI * 2);
-    cursorContext.fill();
     cursorContext.globalAlpha = spark.alpha;
     cursorContext.beginPath();
     cursorContext.arc(spark.x, spark.y, spark.radius, 0, Math.PI * 2);
@@ -390,6 +401,7 @@ globalThis.AmbientField = {
   createStarsForViewport,
   createCursorSpark,
   shouldEnableCursorStarlight,
+  softGlowStops,
   starGlowStyle,
   starGroupIntensity,
   stepCursorSparks,

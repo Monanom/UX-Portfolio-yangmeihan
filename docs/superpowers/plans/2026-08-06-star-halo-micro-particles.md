@@ -157,3 +157,10 @@ Expected: 全部测试通过、语法正确、没有空白错误。
 git add ambient-field.mjs tests/ambient-field.test.mjs design-qa.md AI_HANDOFF.md docs/superpowers/plans/2026-08-06-star-halo-micro-particles.md
 git commit -m "增强星点光晕与底部微粒层次"
 ```
+
+## 视觉修正：无边界柔光与微粒对比
+
+- [x] 将微粒核心透明度提高到 0.8–1.0，同时保留较小尺寸。
+- [x] 新增 `softGlowStops(alpha)`，定义中心、过渡和完全透明的外缘。
+- [x] 背景星点、底部微粒和鼠标星光统一通过 Canvas 径向渐变绘制外晕，移除半透明实心圆。
+- [x] 运行自动测试，并在桌面联系区检查光晕没有清晰圆形边界。
