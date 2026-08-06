@@ -105,6 +105,18 @@ main::before{
 /* ---- 区块公共 ---- */
 .section-eyebrow{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:14px}
 .section-title{font-size:clamp(40px,6vw,72px);font-weight:800;line-height:1.05}
+.title-glow{
+  --title-glow-blur:8px;--title-glow-opacity:.32;
+  position:relative;isolation:isolate;
+}
+.title-glow::after{
+  content:attr(data-glow);position:absolute;inset:0;color:#fff;
+  filter:blur(var(--title-glow-blur));opacity:var(--title-glow-opacity);
+  pointer-events:none;white-space:pre-line;
+}
+.hero-kicker.title-glow,.footer-cta h2.title-glow{
+  --title-glow-blur:10px;--title-glow-opacity:.42;
+}
 .fade-in{opacity:0;transform:translateY(var(--y,24px)) translateX(var(--x,0));transition:opacity .7s ease var(--delay,0ms),transform .7s ease var(--delay,0ms)}
 .fade-in.in{opacity:1;transform:none}
 .about,.projects,.other-projects,.footer-cta{position:relative;isolation:isolate}
@@ -287,7 +299,13 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   .project-card{grid-template-columns:1fr;min-height:0}
   .other-grid{grid-template-columns:1fr 1fr}
 }
-@media (max-width:560px){.other-grid{grid-template-columns:1fr}.project-stats{grid-template-columns:1fr}}
+@media (max-width:560px){
+  .other-grid{grid-template-columns:1fr}
+  .project-stats{grid-template-columns:1fr}
+  .hero-kicker.title-glow,.footer-cta h2.title-glow,.title-glow{
+    --title-glow-blur:6px;--title-glow-opacity:.3;
+  }
+}
 </style>
 </head>
 <body>
@@ -310,7 +328,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
     </div>
   </nav>
   <div class="hero-center">
-    <p class="hero-kicker fade-in">UX Experience Designer</p>
+    <p class="hero-kicker fade-in title-glow" data-glow="UX Experience Designer">UX Experience Designer</p>
     <p class="hero-subtitle fade-in" style="--delay:120ms">B/G端 政企采购<span class="divider">｜</span>AI Agent 设计<span class="divider">｜</span>设计系统与工程化</p>
     <p class="hero-subtext fade-in" style="--delay:200ms">我们习惯仰望星空，却忘了脚下的选择，也能改变未来的轨迹。</p>
     <div class="hero-actions fade-in" style="--delay:300ms">
@@ -331,7 +349,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
     <div class="about-header">
       <div>
         <p class="section-eyebrow fade-in">About / 01</p>
-        <h2 class="about-title fade-in">Hi，我是一名资深 UX 体验设计师。</h2>
+        <h2 class="about-title fade-in title-glow" data-glow="Hi，我是一名资深 UX 体验设计师。">Hi，我是一名资深 UX 体验设计师。</h2>
         <p class="about-summary fade-in" style="--delay:100ms">近10年 UI/UX 产品设计经验，专注 B端 SaaS、C 端工具、AI 产品与企业级系统设计。擅长从复杂业务中梳理信息架构，构建可扩展的设计体系，推动产品体验与业务价值共同成长。</p>
       </div>
       <div class="wechat-contact fade-in" style="--delay:160ms">
@@ -407,7 +425,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   <section class="projects" id="projects">
     <div class="projects-header fade-in">
       <p class="section-eyebrow">Selected Work / 02</p>
-      <h2 class="section-title">精选项目</h2>
+      <h2 class="section-title title-glow" data-glow="精选项目">精选项目</h2>
     </div>
     <div id="projectList"></div>
   </section>
@@ -416,7 +434,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   <section class="other-projects" id="other-projects">
     <div class="fade-in">
       <p class="section-eyebrow">More Work / 03</p>
-      <h2 class="section-title">其他项目</h2>
+      <h2 class="section-title title-glow" data-glow="其他项目">其他项目</h2>
     </div>
     <div class="other-filter fade-in" style="--delay:80ms" id="otherFilter">
       <button class="active" data-filter="all">全部</button>
@@ -430,7 +448,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
 
   <!-- 联系 -->
   <section class="footer-cta" id="contact">
-    <h2 class="fade-in">Design with strategy,<br>deliver with engineering.</h2>
+    <h2 class="fade-in title-glow" data-glow="Design with strategy,&#10;deliver with engineering.">Design with strategy,<br>deliver with engineering.</h2>
     <p class="fade-in" style="--delay:100ms">如果你正在构建 B/G 端系统、AI 产品或企业级设计体系，欢迎与我交流，一起把复杂业务变成清晰好用的产品。</p>
     <div class="wechat-contact fade-in" style="--delay:180ms">
       <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>

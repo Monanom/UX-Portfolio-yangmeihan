@@ -29,7 +29,7 @@
 - Produces: `data-glow` 为伪元素提供与可见标题一致的文本。
 - Consumes: 当前五类主标题现有字号、字重、行高和响应式布局。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 test('白色外发光只覆盖五类主标题', async () => {
@@ -41,13 +41,13 @@ test('白色外发光只覆盖五类主标题', async () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/ambient-field.test.mjs`
 
 Expected: FAIL，因为页面尚未添加 `.title-glow`。
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```css
 .title-glow{
@@ -78,7 +78,7 @@ Expected: FAIL，因为页面尚未添加 `.title-glow`。
 
 为五个目标标题添加 `.title-glow` 和准确的 `data-glow`；底部联系区使用 `&#10;` 保留原有换行。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/ambient-field.test.mjs && git diff --check`
 
@@ -94,19 +94,19 @@ Expected: 新增测试和原有测试全部通过。
 - Consumes: 五类 `.title-glow` 标题。
 - Produces: 桌面、手机和后续微调参数记录。
 
-- [ ] **Step 1: Verify desktop behavior**
+- [x] **Step 1: Verify desktop behavior**
 
 在首屏、项目区和底部联系区检查核心文字清晰、光晕贴合字形，项目卡片标题保持无光晕，按钮点击正常，控制台无页面自身错误。
 
-- [ ] **Step 2: Verify mobile behavior**
+- [x] **Step 2: Verify mobile behavior**
 
 在 390 × 844 检查光晕弱于桌面、多行标题对齐且横向溢出为 0。
 
-- [ ] **Step 3: Record QA and handoff**
+- [x] **Step 3: Record QA and handoff**
 
 在 `design-qa.md` 记录参考来源、桌面和手机结果；在 `AI_HANDOFF.md` 记录 `.title-glow` 的强度调整入口。
 
-- [ ] **Step 4: Run final verification and commit**
+- [x] **Step 4: Run final verification and commit**
 
 Run: `node --test tests/ambient-field.test.mjs && node --check ambient-field.mjs && git diff --check`
 

@@ -13,6 +13,7 @@
 - 改背景圆点光晕：调整 `ambient-field.mjs` 中的 `softGlowStops`、`starGlowStyle` 与 `drawStar`；当前外晕尺寸为核心的 3.6 倍，使用边缘完全透明的径向渐变。
 - 改底部小而亮的微粒：调整 `createMicroParticles`、`createMicroParticlesForViewport` 与 `drawParticle`；主粒子数量保持不变，微粒为桌面 12 颗、手机 8 颗，核心透明度为 0.8–1.0。
 - 改鼠标跟随星光：编辑 `ambient-field.mjs` 中的 `createCursorSpark`、`stepCursorSparks` 与 `handlePointerMove`；覆盖画布为 `index.html` 中的 `#cursorStarlight`。该效果只在宽度大于 900px 的桌面精细指针上启用。
+- 改主标题白色柔光：调整 `index.html` 中的 `.title-glow`、`--title-glow-blur` 和 `--title-glow-opacity`。当前只给五类主标题添加了该类和对应的 `data-glow`，手机端在 560px 以下会自动减弱。
 - 改项目详情：当前抽屉会重复使用项目封面；若要完善，应为每个项目补充独立的详情文案和多张图片，而不是虚构业务数据。
 
 ## 真实性边界

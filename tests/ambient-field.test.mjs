@@ -22,6 +22,22 @@ test('桌面联系区按视口扣除页脚后垂直居中', async () => {
   assert.match(html, /\.footer-cta\s*\{[^}]*justify-content:center/s);
 });
 
+test('白色外发光只覆盖五类主标题', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const titleGlowMatches = html.match(/class="[^"]*title-glow[^"]*"/g) ?? [];
+
+  assert.equal(titleGlowMatches.length, 5);
+  assert.match(
+    html,
+    /\.title-glow::after\{[^}]*content:attr\(data-glow\)[^}]*filter:blur\(var\(--title-glow-blur\)\)/s,
+  );
+  assert.match(
+    html,
+    /@media\s*\(max-width:560px\)\{[\s\S]*?\.hero-kicker\.title-glow,\s*\.footer-cta h2\.title-glow,\s*\.title-glow\s*\{[^}]*--title-glow-blur:6px/,
+  );
+  assert.doesNotMatch(html, /class="[^"]*project-name[^"]*title-glow/);
+});
+
 test('鼠标星光画布覆盖页面但不拦截交互', async () => {
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
