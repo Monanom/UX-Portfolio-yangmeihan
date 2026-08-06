@@ -175,6 +175,9 @@ main::before{
 .feature-card.tall{min-height:640px}
 .feature-card .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
 .feature-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.05) 40%,rgba(10,10,10,.78))}
+.work-card .bgimg{opacity:.72}
+.work-card .shade{background:linear-gradient(180deg,rgba(5,7,17,.12),rgba(5,7,17,.42) 48%,rgba(5,7,17,.9) 100%)}
+.work-card .career-list{padding:88px 28px 28px}
 .feature-label{
   position:absolute;top:18px;left:18px;z-index:2;display:flex;gap:8px;align-items:center;
   padding:6px 10px;font-size:12px;color:var(--ink);border-radius:8px;
@@ -186,9 +189,6 @@ main::before{
 .big-stat-content>span{color:var(--ink-dim);font-size:15px}
 .profile-tags{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .profile-tags span{padding:6px 10px;font-size:12px;border-radius:8px}
-.design-beliefs{position:relative;z-index:2;list-style:none;padding:24px;display:flex;flex-direction:column;gap:14px}
-.design-beliefs li{display:flex;gap:10px;font-size:15px;line-height:1.55;color:var(--ink)}
-.design-beliefs li span{color:var(--ink-soft)}
 .career-list{position:relative;z-index:2;padding:64px 24px 16px}
 .career-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px}
 .career-row:last-child{border-bottom:none}
@@ -375,27 +375,16 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
           <div class="profile-tags"><span class="glass">乐采AI</span><span class="glass">资深UX设计师</span><span class="glass">最佳体验奖·最佳视觉奖</span></div>
         </div>
       </article>
-      <div class="feature-stack">
-        <article class="feature-card fade-in" style="--delay:80ms">
-          <img class="bgimg" src="assets/about-belief.jpg" alt="" />
-          <div class="shade"></div>
-          <div class="feature-label"><span class="spark">✦</span><span>设计理念</span><span class="spark">✦</span></div>
-          <ul class="design-beliefs">
-            <li><span>/</span><p>设计师是产品和用户之间的过渡者</p></li>
-            <li><span>/</span><p>站在用户视角，而非系统逻辑视角解决问题</p></li>
-          </ul>
-        </article>
-        <article class="feature-card fade-in" style="--delay:160ms">
-          <img class="bgimg" src="assets/about-career.jpg" alt="" />
-          <div class="shade"></div>
-          <div class="feature-label"><span class="spark">✦</span><span>职业经历</span><span class="spark">✦</span></div>
-          <div class="career-list">
-            <div class="career-row"><span>至今</span><strong>资深 UX 体验设计师</strong><span>乐采AI · 政企采购</span></div>
-            <div class="career-row"><span>2022–2023</span><strong>最佳体验奖 · 最佳视觉奖</strong><span>公司年度奖项</span></div>
-            <div class="career-row"><span>2023–2024</span><strong>锐意创新奖（团体）</strong><span>采云学院项目 · 连续两年</span></div>
-          </div>
-        </article>
-      </div>
+      <article class="feature-card tall work-card fade-in" style="--delay:120ms">
+        <img class="bgimg" src="assets/about-career-abstract.png" alt="" />
+        <div class="shade"></div>
+        <div class="feature-label"><span class="spark">✦</span><span>工作经历</span><span class="spark">✦</span></div>
+        <div class="career-list">
+          <div class="career-row"><span>至今</span><strong>资深 UX 体验设计师</strong><span>乐采AI · 政企采购</span></div>
+          <div class="career-row"><span>2022–2023</span><strong>最佳体验奖 · 最佳视觉奖</strong><span>公司年度奖项</span></div>
+          <div class="career-row"><span>2023–2024</span><strong>锐意创新奖（团体）</strong><span>采云学院项目 · 连续两年</span></div>
+        </div>
+      </article>
       <div class="feature-stack">
         <article class="feature-card fade-in" style="--delay:120ms">
           <img class="bgimg" src="assets/about-tools.jpg" alt="" />

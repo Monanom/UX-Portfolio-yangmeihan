@@ -38,6 +38,18 @@ test('白色外发光只覆盖五类主标题', async () => {
   assert.doesNotMatch(html, /class="[^"]*project-name[^"]*title-glow/);
 });
 
+test('关于我使用等高工作经历卡片和低干扰本地背景', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+
+  assert.doesNotMatch(html, /设计理念|about-belief\.jpg/);
+  assert.match(html, /class="feature-card tall work-card[^"]*"/);
+  assert.match(html, /<span>工作经历<\/span>/);
+  assert.match(html, /src="assets\/about-career-abstract\.png"/);
+
+  const background = await readFile(new URL('../assets/about-career-abstract.png', import.meta.url));
+  assert.ok(background.byteLength > 1000);
+});
+
 test('鼠标星光画布覆盖页面但不拦截交互', async () => {
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 

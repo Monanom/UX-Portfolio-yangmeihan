@@ -29,21 +29,21 @@
 - Consumes: `.feature-grid`、`.feature-card.tall`、`.shade` 和 `.career-list`。
 - Produces: `.work-card` 等高工作经历卡片与本地抽象背景。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 新增测试，验证页面不再包含“设计理念”和 `about-belief.jpg`，包含“工作经历”、`.work-card.tall` 与 `assets/about-career-abstract.png`，并确认图片文件存在且非空。
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/ambient-field.test.mjs`
 
 Expected: FAIL，因为旧设计理念卡片仍存在，新背景尚未生成。
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 生成深黑蓝抽象 PNG；删除设计理念文章，将中列改成单张 `feature-card tall work-card`，标题改为“工作经历”，背景引用新图片。增加 `.work-card .shade` 的低对比遮罩与手机端合理最小高度。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/ambient-field.test.mjs && git diff --check`
 
@@ -59,15 +59,15 @@ Expected: 15 项测试全部通过，无空白错误。
 - Consumes: 调整后的关于我四卡片布局。
 - Produces: 桌面、手机验收与图片来源记录。
 
-- [ ] **Step 1: Verify desktop and mobile**
+- [x] **Step 1: Verify desktop and mobile**
 
 桌面检查两张高卡片上下对齐、文字清晰；390 × 844 检查单列顺序和横向溢出。
 
-- [ ] **Step 2: Record QA and handoff**
+- [x] **Step 2: Record QA and handoff**
 
 记录新布局、背景资产路径和后续替换入口。
 
-- [ ] **Step 3: Run final verification and commit**
+- [x] **Step 3: Run final verification and commit**
 
 Run: `node --test tests/ambient-field.test.mjs && node --check ambient-field.mjs && git diff --check`
 
