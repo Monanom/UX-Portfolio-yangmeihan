@@ -9,7 +9,7 @@ function seededRandom(seed){
   };
 }
 
-export function createStars(width, height, count, seed = 20260805){
+function createStars(width, height, count, seed = 20260805){
   const random = seededRandom(seed + Math.round(width) * 17 + Math.round(height) * 31);
   const slowestTwinkle = Math.PI * 2 / 7000;
   const fastestTwinkle = Math.PI * 2 / 3000;
@@ -27,11 +27,11 @@ export function createStars(width, height, count, seed = 20260805){
   });
 }
 
-export function createStarsForViewport(width, height, seed = 20260805){
+function createStarsForViewport(width, height, seed = 20260805){
   return createStars(width, height, width <= 560 ? 14 : 24, seed);
 }
 
-export function createParticles(width, height, count, seed = 8086){
+function createParticles(width, height, count, seed = 8086){
   const random = seededRandom(seed + Math.round(width) * 13 + Math.round(height) * 19);
   return Array.from({ length: count }, (_, index) => ({
     x: width * (.26 + random() * .48),
@@ -45,11 +45,11 @@ export function createParticles(width, height, count, seed = 8086){
   }));
 }
 
-export function createParticlesForViewport(width, height, seed = 8086){
+function createParticlesForViewport(width, height, seed = 8086){
   return createParticles(width, height, width <= 560 ? 8 : 10, seed);
 }
 
-export function stepParticles(particles, elapsed, width, height){
+function stepParticles(particles, elapsed, width, height){
   return particles.map(particle => {
     if(particle.y < -particle.radius * 4){
       const random = seededRandom(90210 + particle.cycle * 101 + Math.round(width));
@@ -166,5 +166,13 @@ function startAmbientField(){
   resize();
   syncMotion();
 }
+
+globalThis.AmbientField = {
+  createParticles,
+  createParticlesForViewport,
+  createStars,
+  createStarsForViewport,
+  stepParticles,
+};
 
 if(typeof document !== 'undefined') startAmbientField();

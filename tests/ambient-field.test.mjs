@@ -1,8 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as ambient from '../ambient-field.mjs';
-
+import { readFile } from 'node:fs/promises';
+const moduleAmbient = await import('../ambient-field.mjs');
+const ambient = globalThis.AmbientField ?? moduleAmbient;
 const { createParticles, createStars, stepParticles } = ambient;
+
+test('首页使用可在 file 协议下加载的普通脚本', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const browserScript = await readFile(new URL('../ambient-field.mjs', import.meta.url), 'utf8');
+
+  assert.match(html, /<script src="ambient-field\.mjs"><\/script>/);
+  assert.doesNotMatch(html, /type="module" src="ambient-field\.mjs"/);
+  assert.doesNotMatch(browserScript, /\bexport\s+(?:function|const|let|class)\b/);
+});
 
 test('桌面和手机视口使用更克制的星点数量', () => {
   assert.equal(typeof ambient.createStarsForViewport, 'function');
