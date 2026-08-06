@@ -161,8 +161,8 @@ main::before{
 .wechat-qr-image{width:100%;border-radius:12px}
 .wechat-popover .hint{margin-top:10px;font-size:12px;color:var(--ink-soft);text-align:center}
 
-.feature-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) minmax(0,1fr);gap:20px}
-.feature-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+.feature-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,2fr);gap:20px}
+.experience-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:300px 320px;gap:20px;min-width:0}
 .feature-grid>*{min-width:0}
 .feature-card{
   position:relative;isolation:isolate;border-radius:var(--radius-card);overflow:hidden;
@@ -175,9 +175,13 @@ main::before{
 .feature-card.tall{min-height:640px}
 .feature-card .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
 .feature-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.05) 40%,rgba(10,10,10,.78))}
-.work-card .bgimg{opacity:.72}
+.work-card{grid-column:1/-1}
+.work-card .bgimg{opacity:.72;object-position:center 22%}
 .work-card .shade{background:linear-gradient(180deg,rgba(5,7,17,.12),rgba(5,7,17,.42) 48%,rgba(5,7,17,.9) 100%)}
-.work-card .career-list{padding:88px 28px 28px}
+.work-card .career-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:82px 28px 24px}
+.work-card .career-row{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;padding:14px 16px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(5,7,17,.3)}
+.work-card .career-row:last-child{border-bottom:1px solid rgba(255,255,255,.1)}
+.work-card .career-row span:last-child{text-align:left}
 .feature-label{
   position:absolute;top:18px;left:18px;z-index:2;display:flex;gap:8px;align-items:center;
   padding:6px 10px;font-size:12px;color:var(--ink);border-radius:8px;
@@ -295,7 +299,10 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   .nav-links.open{display:flex;position:fixed;inset:64px 0 auto 0;flex-direction:column;background:rgba(10,10,10,.96);padding:24px;gap:20px;z-index:59}
   .mobile-menu{display:inline-flex;padding:10px 20px;font-size:14px}
   .feature-grid{grid-template-columns:1fr}
+  .experience-grid{grid-template-columns:1fr;grid-template-rows:auto;gap:20px}
   .feature-card.tall{min-height:420px}
+  .work-card{min-height:420px}
+  .work-card .career-list{grid-template-columns:1fr;padding:76px 28px 24px}
   .project-card{grid-template-columns:1fr;min-height:0}
   .other-grid{grid-template-columns:1fr 1fr}
 }
@@ -375,17 +382,17 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
           <div class="profile-tags"><span class="glass">乐采AI</span><span class="glass">资深UX设计师</span><span class="glass">最佳体验奖·最佳视觉奖</span></div>
         </div>
       </article>
-      <article class="feature-card tall work-card fade-in" style="--delay:120ms">
-        <img class="bgimg" src="assets/about-career-abstract.png" alt="" />
-        <div class="shade"></div>
-        <div class="feature-label"><span class="spark">✦</span><span>工作经历</span><span class="spark">✦</span></div>
-        <div class="career-list">
-          <div class="career-row"><span>至今</span><strong>资深 UX 体验设计师</strong><span>乐采AI · 政企采购</span></div>
-          <div class="career-row"><span>2022–2023</span><strong>最佳体验奖 · 最佳视觉奖</strong><span>公司年度奖项</span></div>
-          <div class="career-row"><span>2023–2024</span><strong>锐意创新奖（团体）</strong><span>采云学院项目 · 连续两年</span></div>
-        </div>
-      </article>
-      <div class="feature-stack">
+      <div class="experience-grid">
+        <article class="feature-card work-card fade-in" style="--delay:120ms">
+          <img class="bgimg" src="assets/about-career-abstract.png" alt="" />
+          <div class="shade"></div>
+          <div class="feature-label"><span class="spark">✦</span><span>工作经历</span><span class="spark">✦</span></div>
+          <div class="career-list">
+            <div class="career-row"><span>至今</span><strong>资深 UX 体验设计师</strong><span>乐采AI · 政企采购</span></div>
+            <div class="career-row"><span>2022–2023</span><strong>最佳体验奖 · 最佳视觉奖</strong><span>公司年度奖项</span></div>
+            <div class="career-row"><span>2023–2024</span><strong>锐意创新奖（团体）</strong><span>采云学院项目 · 连续两年</span></div>
+          </div>
+        </article>
         <article class="feature-card fade-in" style="--delay:120ms">
           <img class="bgimg" src="assets/about-tools.jpg" alt="" />
           <div class="shade"></div>

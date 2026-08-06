@@ -38,11 +38,14 @@ test('白色外发光只覆盖五类主标题', async () => {
   assert.doesNotMatch(html, /class="[^"]*project-name[^"]*title-glow/);
 });
 
-test('关于我使用等高工作经历卡片和低干扰本地背景', async () => {
+test('关于我使用横向工作经历和下方双卡片布局', async () => {
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
   assert.doesNotMatch(html, /设计理念|about-belief\.jpg/);
-  assert.match(html, /class="feature-card tall work-card[^"]*"/);
+  assert.match(html, /\.experience-grid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)[^}]*grid-template-rows:300px 320px/s);
+  assert.match(html, /\.work-card\{[^}]*grid-column:1\/-1/s);
+  assert.match(html, /class="experience-grid"[\s\S]*class="feature-card work-card[^"]*"[\s\S]*日常工具[\s\S]*个人优势/);
+  assert.doesNotMatch(html, /class="feature-card tall work-card/);
   assert.match(html, /<span>工作经历<\/span>/);
   assert.match(html, /src="assets\/about-career-abstract\.png"/);
 
