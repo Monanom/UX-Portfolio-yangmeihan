@@ -11,6 +11,8 @@ function seededRandom(seed){
 
 export function createStars(width, height, count, seed = 20260805){
   const random = seededRandom(seed + Math.round(width) * 17 + Math.round(height) * 31);
+  const slowestTwinkle = Math.PI * 2 / 7000;
+  const fastestTwinkle = Math.PI * 2 / 3000;
   return Array.from({ length: count }, () => {
     const animated = random() < .5;
     return {
@@ -20,13 +22,13 @@ export function createStars(width, height, count, seed = 20260805){
       alpha: Math.round((.06 + random() * .8) * 100) / 100,
       phase: random() * Math.PI * 2,
       twinkle: animated ? .04 + random() * .18 : 0,
-      speed: .00035 + random() * .00075,
+      speed: slowestTwinkle + random() * (fastestTwinkle - slowestTwinkle),
     };
   });
 }
 
 export function createStarsForViewport(width, height, seed = 20260805){
-  return createStars(width, height, width <= 560 ? 22 : 40, seed);
+  return createStars(width, height, width <= 560 ? 14 : 24, seed);
 }
 
 export function createParticles(width, height, count, seed = 8086){
@@ -41,6 +43,10 @@ export function createParticles(width, height, count, seed = 8086){
     phase: random() * Math.PI * 2,
     cycle: index,
   }));
+}
+
+export function createParticlesForViewport(width, height, seed = 8086){
+  return createParticles(width, height, width <= 560 ? 8 : 10, seed);
 }
 
 export function stepParticles(particles, elapsed, width, height){
@@ -89,7 +95,7 @@ function startAmbientField(){
     context.setTransform(density, 0, 0, density, 0, 0);
     stars = createStarsForViewport(width, height);
     particleHeight = Math.max(footer.offsetHeight, 560);
-    particles = createParticles(width, particleHeight, width <= 560 ? 14 : 26);
+    particles = createParticlesForViewport(width, particleHeight);
     render(performance.now(), 0, true);
   }
 

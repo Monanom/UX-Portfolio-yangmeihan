@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 减少背景星点、让约一半星点不同步闪烁，并把底部上升粒子限制在中央蓝色光晕区域。
+**Goal:** 将桌面普通星点收敛到 24 颗、底部粒子收敛到 10 颗，让约一半星点以 3–7 秒周期不同步闪烁，并把底部上升粒子限制在中央蓝色光晕区域。
 
 **Architecture:** 保留现有 `ambient-field.mjs` 单 Canvas 架构。新增一个按视口选择数量的星点工厂，继续用固定种子生成稳定数据；闪烁资格和粒子中央范围都在数据生成阶段确定，绘制循环只消费结果。
 
@@ -10,7 +10,8 @@
 
 ## Global Constraints
 
-- 桌面生成 40 颗星，宽度不大于 560px 时生成 22 颗星。
+- 桌面生成 24 颗星，宽度不大于 560px 时生成 14 颗星。
+- 底部粒子桌面生成 10 颗，宽度不大于 560px 时生成 8 颗。
 - 每颗星以 50% 概率闪烁，固定样本的闪烁比例需落在 35%–65%。
 - 上升粒子横坐标必须落在页面宽度的 26%–74%。
 - `prefers-reduced-motion` 开启时保持静态，底部粒子数量和速度不变。
