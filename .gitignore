@@ -1,0 +1,6 @@
+# Cloudflare Pages 构建结果和本地预览材料
+/dist/
+/qa/
+.DS_Store
+
+# 原始媒体纳入私有仓库，发布脚本仅选择网页所需的优化版本

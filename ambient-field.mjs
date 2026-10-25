@@ -125,6 +125,14 @@ function shouldEnableCursorStarlight(width, finePointer, hover, reducedMotion){
   return width > 900 && finePointer && hover && !reducedMotion;
 }
 
+function canvasDensity(deviceScale){
+  return Math.min(Math.max(Number(deviceScale) || 1, 1), 1.5);
+}
+
+function shouldDrawField(heroBottom, footerTop, footerBottom, viewportHeight){
+  return heroBottom < viewportHeight || (footerBottom > 0 && footerTop < viewportHeight);
+}
+
 function createCursorSpark(x, y, seed = Date.now()){
   const random = seededRandom(seed);
   const angle = random() * Math.PI * 2;
@@ -184,6 +192,7 @@ function startAmbientField(){
   let cursorSparks = [];
   let lastPointer = null;
   let sparkSeed = 1;
+  let fieldWasVisible = false;
 
   function cursorStarlightEnabled(){
     return Boolean(cursorContext) && shouldEnableCursorStarlight(
@@ -203,12 +212,22 @@ function startAmbientField(){
     targetContext.setTransform(density, 0, 0, density, 0, 0);
   }
 
+  function resizeCursorCanvas(density){
+    if(!cursorCanvas || !cursorContext) return;
+    if(cursorStarlightEnabled()){
+      resizeCanvas(cursorCanvas, cursorContext, density);
+    }else{
+      cursorCanvas.width = 1;
+      cursorCanvas.height = 1;
+    }
+  }
+
   function resize(){
     width = innerWidth;
     height = innerHeight;
-    const density = Math.min(devicePixelRatio || 1, 2);
+    const density = canvasDensity(devicePixelRatio);
     resizeCanvas(canvas, context, density);
-    resizeCanvas(cursorCanvas, cursorContext, density);
+    resizeCursorCanvas(density);
     stars = createStarsForViewport(width, height);
     particleHeight = Math.max(footer.offsetHeight, 560);
     particles = createParticlesForViewport(width, particleHeight);
@@ -305,15 +324,22 @@ function startAmbientField(){
   }
 
   function render(time, elapsed, staticFrame = false){
-    context.clearRect(0, 0, width, height);
     const heroBottom = hero.getBoundingClientRect().bottom;
+    const footerRect = footer.getBoundingClientRect();
+    if(!shouldDrawField(heroBottom, footerRect.top, footerRect.bottom, height)){
+      if(fieldWasVisible) context.clearRect(0, 0, width, height);
+      fieldWasVisible = false;
+      renderCursorSparks(elapsed, staticFrame);
+      return;
+    }
+    fieldWasVisible = true;
+    context.clearRect(0, 0, width, height);
     context.save();
     context.beginPath();
     context.rect(0, Math.max(0, heroBottom), width, height);
     context.clip();
     stars.forEach(star => drawStar(star, time, staticFrame));
 
-    const footerRect = footer.getBoundingClientRect();
     const footerVisible = footerRect.bottom > 0 && footerRect.top < height;
     if(footerVisible){
       if(!staticFrame){
@@ -353,6 +379,7 @@ function startAmbientField(){
   }
 
   function syncCursorPolicy(){
+    resizeCursorCanvas(canvasDensity(devicePixelRatio));
     if(cursorStarlightEnabled()) return;
     cursorSparks = [];
     lastPointer = null;
@@ -393,6 +420,7 @@ function startAmbientField(){
 }
 
 globalThis.AmbientField = {
+  canvasDensity,
   createMicroParticles,
   createMicroParticlesForViewport,
   createParticles,
@@ -401,6 +429,7 @@ globalThis.AmbientField = {
   createStarsForViewport,
   createCursorSpark,
   shouldEnableCursorStarlight,
+  shouldDrawField,
   softGlowStops,
   starGlowStyle,
   starGroupIntensity,

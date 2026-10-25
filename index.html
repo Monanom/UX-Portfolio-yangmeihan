@@ -5,6 +5,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>资深 UX 体验设计师 - 个人作品集</title>
 <meta name="description" content="聚焦 BG 端采购行业体验设计、AI Agent 设计、设计系统与工程化的资深 UX 体验设计师个人作品集。" />
+<link rel="preload" as="image" href="assets/hero-video-poster.webp" fetchpriority="high" />
+<script id="hero-title-gate">
+(function(){
+  const desktop = matchMedia('(min-width:901px)');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const root = document.documentElement;
+  let mode = desktop.matches && !reducedMotion.matches ? 'pending' : 'fallback';
+  let timer = 0;
+  let deadlineAt = Infinity;
+  let deadlineOpen = mode === 'pending';
+  let locked = mode === 'fallback';
+  root.classList.add(`hero-title-${mode}`);
+
+  function canTryEffect(){
+    if(mode === 'pending' && performance.now() >= deadlineAt) forceFallback();
+    return desktop.matches && !reducedMotion.matches && deadlineOpen && !locked && mode === 'pending';
+  }
+
+  function chooseEffect(){
+    if(mode === 'effect') return true;
+    if(!canTryEffect()) return false;
+    mode = 'effect';
+    clearTimeout(timer);
+    root.classList.remove('hero-title-pending');
+    root.classList.add('hero-title-effect');
+    return true;
+  }
+
+  function forceFallback(){
+    locked = true;
+    deadlineOpen = false;
+    clearTimeout(timer);
+    if(mode === 'fallback') return true;
+    mode = 'fallback';
+    root.classList.remove('hero-title-pending', 'hero-title-effect');
+    root.classList.add('hero-title-fallback');
+    return true;
+  }
+
+  function startDeadline(){
+    if(!desktop.matches || reducedMotion.matches || locked || timer || mode !== 'pending') return;
+    deadlineAt = performance.now() + 3000;
+    timer = setTimeout(() => {
+      timer = 0;
+      if(mode === 'pending') forceFallback();
+    }, 3000);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', startDeadline, { once:true });
+  }else{
+    startDeadline();
+  }
+  desktop.addEventListener?.('change', () => {
+    if(!desktop.matches) forceFallback();
+    else startDeadline();
+  });
+  reducedMotion.addEventListener?.('change', () => {
+    if(reducedMotion.matches) forceFallback();
+  });
+  globalThis.HeroTitleGate = {
+    canTryEffect,
+    isEffect: () => mode === 'effect',
+    chooseEffect,
+    chooseFallback: forceFallback,
+    forceFallback,
+  };
+})();
+</script>
 <style>
 :root{
   color-scheme: dark;
@@ -21,7 +90,7 @@
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
-html{scroll-behavior:smooth;overflow-x:clip}
+html{scroll-behavior:smooth;scroll-padding-top:88px;overflow-x:clip}
 body{
   background:#050711;
   color:var(--ink);overflow-x:clip;position:relative;isolation:isolate;
@@ -43,7 +112,7 @@ main::before{
   background-image:
     radial-gradient(ellipse 46% 480px at 10% 30%,rgba(50,82,255,.28),rgba(43,58,190,.12) 42%,transparent 76%),
     radial-gradient(ellipse 48% 540px at 86% 36%,rgba(67,54,255,.22),rgba(35,52,170,.09) 46%,transparent 78%),
-    url("assets/backgrounds/lingma-content-desktop.png");
+    url("assets/backgrounds/lingma-content-desktop.webp");
   background-repeat:no-repeat;
   background-size:100% 100%,100% 100%,contain;
   background-position:center,center,center clamp(700px,75vw,1080px);
@@ -81,24 +150,25 @@ main::before{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.23),inset 0 -1px 0 rgba(255,255,255,.035),0 20px 52px rgba(0,0,0,.38);
 }
 /* ---- 首屏 ---- */
-.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;z-index:1}
-.hero-bg{position:absolute;inset:0;z-index:-1}
-.hero-bg img{width:100%;height:100%;object-fit:cover;animation:heroDrift 26s ease-in-out infinite alternate}
-.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.55),rgba(10,10,10,.15) 40%,rgba(10,10,10,.72) 100%)}
-@keyframes heroDrift{from{transform:scale(1.02)}to{transform:scale(1.1) translateX(-1.5%)}}
-.nav{display:flex;align-items:center;justify-content:space-between;width:var(--container);margin:0 auto;padding:26px 0}
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;z-index:1;padding-top:92px}
+.hero-bg{position:absolute;inset:0;z-index:-1;background:#02040b url("assets/hero-video-poster.webp") center/cover no-repeat}
+.hero-bg video{display:block;position:relative;left:13vw;width:130%;max-width:none;height:100%;object-fit:cover;object-position:center;scale:.8;filter:brightness(.82) saturate(.9)}
+.hero-bg::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(5,7,17,.82) 0%,rgba(5,7,17,.58) 38%,rgba(5,7,17,.12) 66%,transparent 100%)}
+.hero-bg::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(10,10,10,.55),rgba(10,10,10,.15) 40%,rgba(10,10,10,.72) 100%)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;width:100%;padding:26px max(20px,calc((100vw - 1280px)/2));background:rgba(5,7,17,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .nav-logo{font-weight:800;font-size:18px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
 .nav-logo .mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#7aa8ff,#b48cff);display:inline-block}
 .nav-links{display:flex;gap:34px;font-size:14px;color:var(--ink-dim)}
 .nav-links a{transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:var(--ink)}
 .nav-cta{padding:10px 22px;font-size:14px;font-weight:600}
-.hero-center{flex:1;display:flex;flex-direction:column;justify-content:flex-end;width:var(--container);margin:0 auto;padding-bottom:clamp(56px,9vh,110px)}
-.hero-kicker{font-size:clamp(40px,7vw,96px);font-weight:800;line-height:1.02;letter-spacing:-.01em}
-.hero-subtitle{margin-top:18px;font-size:clamp(16px,2vw,24px);color:var(--ink);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.hero-center{position:relative;top:-64px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;width:var(--container);margin:0 auto;padding-bottom:clamp(56px,9vh,110px)}
+.hero-kicker{font-size:clamp(60px,10.5vw,144px);font-weight:800;line-height:.96;letter-spacing:-.01em}
+.hero-title-line{display:block}
+.hero-subtitle{margin-top:48px;font-size:clamp(16px,2vw,24px);color:var(--ink);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .hero-subtitle .divider{color:var(--ink-soft)}
 .hero-subtext{margin-top:14px;max-width:560px;color:var(--ink-dim);font-size:clamp(14px,1.4vw,17px);line-height:1.6}
-.hero-actions{margin-top:30px}
+.hero-actions{margin-top:48px}
 .hero-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;font-size:15px}
 .mobile-menu{display:none}
 
@@ -117,33 +187,64 @@ main::before{
 .hero-kicker.title-glow,.footer-cta h2.title-glow{
   --title-glow-blur:10px;--title-glow-opacity:.42;
 }
+.hero-kicker.title-glow{
+  color:var(--ink);isolation:auto;background:none;
+  -webkit-text-fill-color:currentColor;
+  -webkit-text-stroke:0;
+  text-shadow:none;
+}
+.hero-kicker.title-glow::after{content:attr(data-glow)}
+.hero-kicker.title-glow.metal-shader-ready{
+  color:rgba(255,255,255,.74);
+  -webkit-text-fill-color:currentColor;
+  -webkit-text-stroke:0;
+  text-shadow:none;
+}
+.hero-kicker.title-glow.metal-shader-ready .hero-title-line{visibility:hidden}
+.hero-kicker.title-glow.metal-shader-ready::after{content:none}
+html.hero-title-pending .hero-kicker.title-glow .hero-title-line{visibility:hidden}
+html.hero-title-pending .hero-kicker.title-glow::after{content:none}
+html.hero-title-effect .hero-kicker.title-glow .hero-title-line{visibility:hidden}
+html.hero-title-effect .hero-kicker.title-glow::after{content:none}
+.hero-metal-layer{
+  position:absolute;left:-14px;right:-14px;top:-14px;bottom:auto;height:var(--metal-mask-height);
+  z-index:1;display:block;visibility:hidden;pointer-events:none;mix-blend-mode:screen;isolation:auto;opacity:0;
+  transition:opacity .18s ease-out;
+  filter:drop-shadow(0 0 7px rgba(111,172,255,.26));overflow:hidden;
+}
+.hero-kicker.title-glow.metal-shader-ready .hero-metal-layer{visibility:visible;opacity:.92}
+.hero-metal-layer canvas{display:block;width:100%!important;height:100%!important;pointer-events:none}
 .fade-in{opacity:0;transform:translateY(var(--y,24px)) translateX(var(--x,0));transition:opacity .7s ease var(--delay,0ms),transform .7s ease var(--delay,0ms)}
 .fade-in.in{opacity:1;transform:none}
+.hero-kicker.fade-in{opacity:1;transform:none}
 .about,.projects,.other-projects,.footer-cta{position:relative;isolation:isolate}
 .footer-cta::before{
   content:"";position:absolute;z-index:-1;pointer-events:none;
   inset:-22% -16% -96px;
-  background-image:url("assets/backgrounds/lingma-footer-glow-desktop.png");
+  background-image:url("assets/backgrounds/lingma-footer-glow-desktop.webp");
   background-repeat:no-repeat;background-size:contain;background-position:center bottom;
   opacity:.88;
 }
 
 /* ---- 走马灯 ---- */
-.marquee{padding:var(--section-space) 0 calc(var(--section-space)*.6);overflow:hidden;display:flex;flex-direction:column;gap:20px}
-.marquee-row{display:flex;gap:20px;width:max-content;animation:slideL 46s linear infinite}
+.marquee{padding:calc(var(--section-space)*.5) 0 calc(var(--section-space)*.3);overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.marquee-row{display:flex;gap:10px;padding-right:10px;width:max-content;animation:slideL 46s linear infinite;animation-play-state:paused}
 .marquee-row.reverse{animation-name:slideR}
-.marquee:hover .marquee-row{animation-play-state:paused}
+.marquee.motion-active .marquee-row{animation-play-state:running}
+.marquee.motion-active:hover .marquee-row{animation-play-state:paused}
 @keyframes slideL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes slideR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
-.tile{width:clamp(280px,32vw,460px);aspect-ratio:3/2;border-radius:var(--radius-media);overflow:hidden;flex:none;background:var(--surface-1)}
-.tile img{width:100%;height:100%;object-fit:cover}
+.tile{width:clamp(140px,16vw,230px);aspect-ratio:16/9;border-radius:calc(var(--radius-media)*.5);overflow:hidden;flex:none;background:var(--surface-1)}
+.tile img{width:100%;height:100%;object-fit:contain}
 
 /* ---- 关于我 ---- */
-.about{width:var(--container);margin:0 auto;padding:var(--section-space) 0}
-.about-header{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;margin-bottom:48px;flex-wrap:wrap}
-.about-title{font-size:clamp(34px,5vw,60px);font-weight:800;margin-bottom:18px}
-.about-summary{max-width:640px;color:var(--ink-dim);font-size:clamp(15px,1.5vw,18px);line-height:1.7}
-.contact-button{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;font-weight:600;font-size:15px;white-space:nowrap}
+.about{width:var(--container);margin:0 auto;padding:var(--section-space) 0 calc(var(--section-space) * .5)}
+.about-header{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:40px;row-gap:18px;align-items:start;margin-bottom:48px}
+.about-title{font-size:clamp(34px,5vw,60px);font-weight:800}
+.about-summary{grid-column:1/-1;max-width:none;color:var(--ink-dim);font-size:clamp(15px,1.5vw,18px);line-height:1.7}
+.about-header > .wechat-contact{grid-column:2;grid-row:1}
+.contact-button{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;font-weight:600;font-size:15px;white-space:nowrap}
+.contact-button img{display:block;width:24px;height:24px;flex:none}
 .wechat-contact{position:relative}
 .wechat-popover{
   position:absolute;top:calc(100% + 14px);right:0;width:240px;padding:18px;border-radius:20px;
@@ -154,12 +255,12 @@ main::before{
 .wechat-contact.open .wechat-popover{opacity:1;pointer-events:auto;transform:translateX(var(--px,0))}
 .wechat-popover.center{right:auto;left:50%;--px:-50%;transform:translate(-50%,-6px)}
 .footer-cta .wechat-popover{top:auto;bottom:calc(100% + 14px);transform:translate(-50%,6px)}
-.wechat-profile{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.wechat-avatar img{width:44px;height:44px;border-radius:50%}
+.wechat-profile{display:flex;align-items:center;gap:12px;margin-bottom:14px;text-align:left}
+.wechat-avatar{position:relative;width:44px;height:44px;flex:none;overflow:hidden;border-radius:50%;background:#fff}
+.wechat-avatar img{position:absolute;left:calc(50% - 3px);top:50%;width:66px;height:auto;max-width:none;transform:translate(-50%,-50%)}
 .wechat-profile-name{display:block;font-size:15px}
 .wechat-profile-location{font-size:12px;color:var(--ink-soft)}
-.wechat-qr-image{width:100%;border-radius:12px}
-.wechat-popover .hint{margin-top:10px;font-size:12px;color:var(--ink-soft);text-align:center}
+.wechat-qr-image{width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;border-radius:12px}
 
 .feature-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,2fr);gap:20px}
 .experience-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:300px 320px;gap:20px;min-width:0}
@@ -175,31 +276,41 @@ main::before{
 .feature-card.tall{min-height:640px}
 .feature-card .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
 .feature-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.05) 40%,rgba(10,10,10,.78))}
+.portrait-card .portrait-base{inset:20px 16px 120px;width:calc(100% - 32px);height:calc(100% - 140px);object-fit:contain;object-position:center;opacity:1;transform:scale(1.2)}
+.portrait-card .shade{background:linear-gradient(180deg,transparent 0%,transparent 75%,rgba(5,8,18,.55) 100%)}
 .work-card{grid-column:1/-1}
 .work-card .bgimg{opacity:.72;object-position:center 22%}
 .work-card .shade{background:linear-gradient(180deg,rgba(5,7,17,.12),rgba(5,7,17,.42) 48%,rgba(5,7,17,.9) 100%)}
-.work-card .career-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:82px 28px 24px}
+.work-card .career-list{position:absolute;left:0;right:0;top:88px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:0 28px 24px}
 .work-card .career-list::before{
-  content:"";position:absolute;left:16.5%;right:16.5%;top:98px;height:4px;
+  content:"";position:absolute;left:0;right:0;top:50px;height:4px;
   background:radial-gradient(circle,rgba(202,218,255,.52) 0 1.25px,transparent 1.6px) 0 50%/10px 4px repeat-x;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
 }
-.work-card .career-row{position:relative;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:44px 16px 0;border:0;background:none;text-align:center}
-.work-card .career-row::before{
-  content:"";position:absolute;z-index:2;top:13px;left:50%;width:10px;height:10px;border-radius:50%;
-  background:#f8fbff;transform:translateX(-50%);
-  box-shadow:0 0 0 4px rgba(116,156,255,.2),0 0 18px rgba(116,156,255,.95),0 0 34px rgba(83,107,255,.5);
+.work-card .career-row{position:relative;isolation:isolate;min-width:0;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:7px;padding:0 8px;border:0;background:none;text-align:left}
+.work-card .career-star{
+  position:absolute;z-index:2;top:40px;left:16px;width:24px;height:24px;
+  fill:#fff;transform:translateX(-50%);pointer-events:none;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.49)) drop-shadow(0 0 10px rgba(255,255,255,.33)) drop-shadow(0 0 18px rgba(255,255,255,.15));
 }
-.work-card .career-row span:last-child{text-align:center}
+.work-card .career-row::after{
+  content:"";position:absolute;z-index:-1;top:28px;left:-8px;width:48px;height:48px;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.25) 0,rgba(255,255,255,.11) 32%,rgba(255,255,255,0) 72%);
+  filter:blur(5px);
+}
+.work-card .career-row span:first-child{line-height:20px;font-size:clamp(12px,1.25vw,16px)}
+.work-card .career-row strong{margin-top:61px;font-size:clamp(15px,1.4vw,17px);overflow-wrap:anywhere}
+.work-card .career-row span:last-child{text-align:left;overflow-wrap:anywhere}
 .feature-label{
   position:absolute;top:18px;left:18px;z-index:2;display:flex;gap:8px;align-items:center;
   padding:6px 10px;font-size:12px;color:var(--ink);border-radius:8px;
   border:1px solid rgba(255,255,255,.16);background:rgba(12,12,12,.35);backdrop-filter:blur(14px);
 }
 .feature-label .spark{color:var(--ink-soft)}
-.big-stat-content{position:relative;z-index:2;padding:28px}
+.big-stat-content{position:relative;z-index:2;padding:20px 28px 28px}
 .big-stat-content strong{display:block;font-size:clamp(48px,5vw,76px);font-weight:800;line-height:1}
+.big-stat-content strong.profile-role{font-size:clamp(34px,3.7vw,52px);letter-spacing:-.04em}
 .big-stat-content>span{color:var(--ink-dim);font-size:15px}
 .profile-tags{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .profile-tags span{padding:6px 10px;font-size:12px;border-radius:8px}
@@ -209,16 +320,24 @@ main::before{
 .career-row span:first-child{color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
 .career-row strong{font-size:15px}
 .career-row span:last-child{color:var(--ink-dim);font-size:13px;text-align:right}
-.tool-marquee{position:relative;z-index:2;padding:22px 0;display:flex;flex-direction:column;gap:12px;overflow:hidden}
-.tool-row{display:flex;gap:12px;width:max-content;animation:slideL 24s linear infinite}
-.tool-row.right{animation-name:slideR}
-.tool-tile{padding:7px 11px;font-size:12px;border-radius:8px;white-space:nowrap}
-.advantage-grid{position:relative;z-index:2;padding:24px;display:flex;flex-wrap:wrap;gap:14px;align-content:flex-end}
-.advantage-tag{padding:7px 11px;font-size:12px;border-radius:8px;animation:floatTag var(--dur,9s) ease-in-out infinite alternate;transform:rotate(var(--rot,0deg))}
-@keyframes floatTag{from{transform:rotate(var(--rot,0deg)) translate(0,0)}to{transform:rotate(var(--rot,0deg)) translate(var(--tx,4px),var(--ty,-6px))}}
+.tool-marquee{
+  position:relative;z-index:2;padding:22px 0;display:grid;gap:14px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);
+}
+.tool-row{display:flex;gap:14px;width:max-content}
+.tool-row.left{animation:toolScrollLeft 22s linear infinite;animation-play-state:paused}
+.tool-row.right{animation:toolScrollRight 26s linear infinite;animation-play-state:paused;transform:translateX(-50%)}
+.tools-card.motion-active .tool-row{animation-play-state:running}
+@keyframes toolScrollLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes toolScrollRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.advantage-grid{position:absolute;z-index:2;top:136px;left:0;right:0;padding:0 24px;display:flex;flex-wrap:wrap;gap:14px;align-content:flex-start}
+.advantage-tag{padding:7px 11px;font-size:12px;border-radius:8px;animation:floatTag var(--dur,9s) ease-in-out infinite alternate;animation-play-state:paused;transform:rotate(var(--rot,0deg))}
+.advantage-card.motion-active .advantage-tag{animation-play-state:running}
+@keyframes floatTag{from{transform:rotate(var(--rot,0deg)) translate(0,0)}to{transform:rotate(var(--rot,0deg)) translate(var(--tx,9px),var(--ty,-12px))}}
 
 /* ---- 精选项目 ---- */
-.projects{padding:var(--section-space) 0 0}
+.projects{padding:calc(var(--section-space) * .5) 0 0}
 .projects-header{width:var(--container);margin:0 auto 56px}
 .project-wrap{position:sticky;top:calc(60px + var(--stack,0px));padding:0 var(--gutter) 40px}
 .project-card{
@@ -226,7 +345,7 @@ main::before{
   background:radial-gradient(ellipse 72% 64% at 100% 0%,var(--accent-fade,rgba(255,255,255,.035)) 0%,transparent 70%),radial-gradient(ellipse 42% 34% at 8% -4%,rgba(255,255,255,.055),transparent 72%),linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.004) 58%),var(--glass-panel);
   backdrop-filter:blur(26px) saturate(1.22);-webkit-backdrop-filter:blur(26px) saturate(1.22);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 1px 0 0 rgba(255,255,255,.03),inset 0 0 0 1px rgba(0,0,0,.2),0 28px 80px rgba(0,0,0,.32);transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;
-  display:grid;grid-template-columns:1fr 1.15fr;gap:40px;padding:clamp(28px,4vw,56px);min-height:520px;
+  display:grid;grid-template-columns:1fr 1.15fr;gap:40px;padding:clamp(28px,4vw,56px);
 }
 .project-card:hover,.feature-card:hover,.other-card:hover{transform:none;border-color:var(--glass-border-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(0,0,0,.16),0 34px 96px rgba(0,0,0,.4)}
 .project-copy{display:flex;flex-direction:column;justify-content:space-between;gap:28px}
@@ -236,9 +355,9 @@ main::before{
 .project-meta span{padding:6px 10px;font-size:12px;border-radius:8px}
 .project-meta .glass:hover,.profile-tags .glass:hover,.tool-tile:hover,.advantage-tag:hover{transform:none}
 .live-button{align-self:flex-start;width:148px;height:40px;padding:0;justify-content:center;font-size:14px;display:inline-flex;gap:8px;align-items:center}
-.project-visual{display:flex;flex-direction:column;gap:22px}
-.project-image{border-radius:var(--radius-media);overflow:hidden;flex:1;border:1px solid var(--accent-border,var(--line));padding:0;text-align:left}
-.project-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.project-visual{display:flex;flex-direction:column;justify-content:space-between;gap:22px}
+.project-image{display:block;width:100%;aspect-ratio:16/9;border-radius:var(--radius-media);overflow:hidden;flex:0 0 auto;border:1px solid var(--accent-border,var(--line));padding:0;text-align:left}
+.project-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
 .project-card:hover .project-image img{transform:scale(1.03)}
 .project-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .project-stat{border-top:1px solid var(--line);padding-top:16px}
@@ -255,6 +374,25 @@ main::before{
   backdrop-filter:blur(var(--blur-glass)) saturate(1.35);-webkit-backdrop-filter:blur(var(--blur-glass)) saturate(1.35);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 28px rgba(0,0,0,.26);
 }
+.tools-card .tool-tile{
+  width:clamp(64px,5.4vw,72px);height:clamp(64px,5.4vw,72px);padding:0;display:grid;place-items:center;flex:none;
+  border:1px solid rgba(255,255,255,.14);border-radius:12px;color:rgba(255,255,255,.94);font-size:13px;font-weight:500;white-space:nowrap;
+  isolation:isolate;background:linear-gradient(150deg,rgba(8,12,19,.1),rgba(5,8,12,.035) 60%);
+  backdrop-filter:blur(30px) saturate(1.35);-webkit-backdrop-filter:blur(30px) saturate(1.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13),inset 0 -1px 0 rgba(255,255,255,.024),0 10px 24px rgba(0,0,0,.32);
+  text-shadow:0 1px 8px rgba(0,0,0,.72);overflow:hidden;
+}
+.tools-card .tool-tile::before{
+  content:"";position:absolute;inset:-18px;z-index:0;pointer-events:none;
+  background:url("assets/about-tools-stars.webp") var(--tile-x,50%) var(--tile-y,50%)/310% auto no-repeat;
+  filter:blur(11px) saturate(1.3);transform:scale(1.14);opacity:.92;
+}
+.tools-card .tool-tile::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,.15) 0%,rgba(255,255,255,.043) 22%,transparent 46%,transparent 100%);
+}
+.tools-card .tool-label{position:relative;z-index:2;display:block;text-align:center;line-height:1.2}
+.tools-card .shade{background:linear-gradient(180deg,rgba(10,10,10,.16),rgba(10,10,10,.03) 42%,rgba(10,10,10,.5))}
 .other-filter button.active,.other-filter button:hover{color:#fff;border-color:rgba(255,255,255,.2);background:radial-gradient(circle at 24% -16%,rgba(255,255,255,.16),transparent 36%),linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.018) 58%),var(--glass-control-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.23),inset 0 -1px 0 rgba(255,255,255,.035),0 20px 52px rgba(0,0,0,.38)}
 .other-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .other-card{position:relative;isolation:isolate;border-radius:var(--radius-media);overflow:hidden;border:1px solid var(--glass-border);aspect-ratio:3/2;padding:0;background:radial-gradient(ellipse 72% 64% at 100% 0%,rgba(255,255,255,.035) 0%,transparent 70%),radial-gradient(ellipse 42% 34% at 8% -4%,rgba(255,255,255,.055),transparent 72%),linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.004) 58%),var(--glass-panel);backdrop-filter:blur(26px) saturate(1.22);-webkit-backdrop-filter:blur(26px) saturate(1.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 1px 0 0 rgba(255,255,255,.03),inset 0 0 0 1px rgba(0,0,0,.2),0 28px 80px rgba(0,0,0,.32);transition:opacity .3s,transform .35s ease,border-color .35s ease,box-shadow .35s ease}
@@ -266,8 +404,11 @@ main::before{
 .footer-cta{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--section-space) var(--gutter)}
 .footer-cta h2{max-width:920px;font-size:clamp(44px,8.5vw,110px);line-height:.92;font-weight:900;text-transform:uppercase;margin-bottom:26px}
 .footer-cta p{color:var(--ink-dim);max-width:600px;font-size:clamp(15px,1.6vw,19px);line-height:1.55;margin-bottom:32px}
-.footer-contact-phone{margin-top:16px;color:var(--ink-dim);font-size:13px;letter-spacing:.04em}
-.footer-contact-phone:hover{color:var(--ink)}
+.footer-contact-details{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;column-gap:18px;row-gap:12px;margin-top:18px;color:var(--ink-dim);font-size:clamp(10px,calc(1.4vw - 4px),14px);line-height:1.4}
+.footer-contact-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.footer-contact-item[href]:hover,.footer-contact-item[href]:focus-visible{color:var(--ink)}
+.footer-contact-item svg,.footer-contact-item img{display:block;width:16px;height:16px;flex:none;opacity:.8}
+.footer-contact-divider{color:var(--ink-soft);font-size:16px}
 footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var(--container);margin:0 auto;padding:32px 0 48px;color:var(--ink-dim);text-transform:uppercase;font-size:12px}
 
 /* ---- 项目详情抽屉 ---- */
@@ -276,16 +417,33 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
 .case-backdrop{position:absolute;inset:0;background:rgba(5,5,5,.72);backdrop-filter:blur(8px)}
 .case-close{position:absolute;top:24px;right:24px;z-index:120;width:48px;height:48px;font-size:20px;line-height:1}
 .case-sheet{
-  position:absolute;inset:4vh 4vw;border-radius:28px;overflow-y:auto;background:var(--surface-1);
-  border:1px solid var(--line);padding:clamp(24px,4vw,56px);overscroll-behavior:contain;
+  position:absolute;inset:4vh 4vw;border-radius:28px;overflow-y:auto;background:#0d1015;
+  border:1px solid rgba(255,255,255,.2);padding:clamp(24px,4vw,56px);overscroll-behavior:contain;
 }
 .case-sheet h3{font-size:clamp(26px,3vw,40px);font-weight:800;margin-bottom:12px}
 .case-sheet .case-desc{color:var(--ink-dim);max-width:720px;line-height:1.7;margin-bottom:30px}
 .case-gallery{display:flex;flex-direction:column;gap:20px}
-.case-gallery img{width:100%;border-radius:var(--radius-media);border:1px solid var(--line)}
+.case-image{background:#15181c;border-radius:0;overflow:hidden}
+.case-image img{width:100%;height:auto}
+.case-image img[hidden],.case-image-error[hidden]{display:none}
+.case-image-error{min-height:260px;display:grid;place-items:center;padding:24px;color:var(--ink-dim);text-align:center}
+.case-gallery-empty{min-height:260px;display:grid;place-items:center;padding:24px;border:1px dashed var(--line);border-radius:var(--radius-media);color:var(--ink-dim);text-align:center}
+.case-nav{display:grid;grid-template-columns:1fr minmax(160px,.46fr) 1fr;grid-template-areas:"prev all next";gap:16px;margin-top:40px}
+.case-nav-button{display:flex;flex-direction:column;justify-content:center;gap:10px;min-height:108px;padding:22px 26px;border:1px solid var(--line);border-radius:20px;text-align:left;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(9,11,14,.86) 62%);transition:border-color .2s,background .2s}
+.case-nav-button:hover{border-color:var(--glass-border-hover);background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(9,11,14,.88) 62%)}
+.case-nav-button[hidden]{display:none}
+.case-nav-button small{color:var(--ink-soft);font-size:12px;letter-spacing:.06em}
+.case-nav-button strong{font-size:clamp(14px,1.3vw,18px);line-height:1.35}
+.case-nav-prev{grid-area:prev}.case-nav-all{grid-area:all;align-items:center;text-align:center}.case-nav-next{grid-area:next;align-items:flex-end;text-align:right}
 
 /* ---- 响应式 ---- */
 @media (min-width:901px){
+  .hero-kicker.title-glow .hero-title-line{
+    padding-bottom:.16em;margin-bottom:-.16em;
+    background:linear-gradient(175deg,#faffff 3%,#d9e4f1 22%,#8297b3 40%,#f7fbff 54%,#afc2db 70%,#fff 84%,#8da6c7 100%);
+    background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+  }
+  .about-header > .wechat-contact{margin-top:34px}
   .footer-cta{
     min-height:calc(100svh - 96px);
     justify-content:center;
@@ -293,44 +451,82 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   }
 }
 @media (max-width:900px){
+  .hero-bg{background-position:44% center;background-size:260% auto}
+  .hero-kicker.title-glow .hero-title-line{
+    background:none;color:var(--ink);-webkit-text-fill-color:currentColor;
+  }
+  .hero-kicker.title-glow::after{content:none}
+  .hero-metal-layer{display:none}
+  .about-header{grid-template-columns:1fr;row-gap:16px}
+  .about-header > .wechat-contact{grid-column:1;grid-row:3;justify-self:start}
+  .hero-bg video{top:-12.5%;left:2vw;width:260%;max-width:none;height:125%;object-fit:cover;object-position:45% center;transform:translateX(-24%)}
   main::before{
     background-image:
       radial-gradient(ellipse 78% 360px at 12% 39%,rgba(50,82,255,.2),rgba(43,58,190,.08) 44%,transparent 78%),
       radial-gradient(ellipse 82% 420px at 88% 48%,rgba(67,54,255,.16),rgba(35,52,170,.06) 48%,transparent 80%),
-      url("assets/backgrounds/lingma-content-mobile.png");
+      url("assets/backgrounds/lingma-content-mobile.webp");
     background-position:center,center,center clamp(480px,110vw,720px);
   }
   .footer-cta::before{
     inset:-12% -24% -72px;
-    background-image:url("assets/backgrounds/lingma-footer-glow-mobile.png");
+    background-image:url("assets/backgrounds/lingma-footer-glow-mobile.webp");
   }
   .nav-links{display:none}
-  .nav{position:fixed;top:0;left:0;right:0;z-index:60;padding:16px 20px;background:rgba(10,10,10,.75);backdrop-filter:blur(18px)}
+  html{scroll-padding-top:72px}
+  .hero{padding-top:72px;min-height:calc(100svh - clamp(72px,12svh,120px))}
+  .hero-center{position:relative;top:calc(clamp(-48px,-5svh,-24px) - 64px)}
+  .nav{padding:16px 20px}
   .nav-links.open{display:flex;position:fixed;inset:64px 0 auto 0;flex-direction:column;background:rgba(10,10,10,.96);padding:24px;gap:20px;z-index:59}
   .mobile-menu{display:inline-flex;padding:10px 20px;font-size:14px}
   .feature-grid{grid-template-columns:1fr}
   .experience-grid{grid-template-columns:1fr;grid-template-rows:auto;gap:20px}
   .feature-card.tall{min-height:420px}
-  .work-card{min-height:420px}
-  .work-card .career-list{grid-template-columns:1fr;padding:76px 28px 24px}
+  .portrait-card.feature-card.tall{min-height:560px}
+  .advantage-card .advantage-grid{top:136px;padding:0 24px;align-content:flex-start}
+  .work-card{min-height:0;padding-top:76px}
+  .work-card .career-list{position:relative;top:auto;grid-template-columns:1fr;gap:0;padding:0 28px 24px}
   .work-card .career-list::before{
-    left:45px;right:auto;top:92px;bottom:42px;width:4px;height:auto;
+    left:45px;right:auto;top:21px;bottom:42px;width:4px;height:auto;
     background:radial-gradient(circle,rgba(202,218,255,.52) 0 1.25px,transparent 1.6px) 50% 0/4px 10px repeat-y;
     -webkit-mask-image:linear-gradient(180deg,transparent,#000 10%,#000 90%,transparent);
     mask-image:linear-gradient(180deg,transparent,#000 10%,#000 90%,transparent);
   }
   .work-card .career-row{min-height:86px;align-items:flex-start;padding:12px 0 12px 48px;text-align:left}
-  .work-card .career-row::before{top:18px;left:18px}
+  .work-card .career-star{top:11px;left:19px}
+  .work-card .career-row::after{top:-1px;left:-5px}
+  .work-card .career-row strong{margin-top:0}
+  .work-card .career-row span:first-child{font-size:16px}
+  .work-card .career-row strong{font-size:17px}
   .work-card .career-row span:last-child{text-align:left}
   .project-card{grid-template-columns:1fr;min-height:0}
   .other-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:560px){
+  .footer-contact-details{flex-direction:column;gap:10px;font-size:12px}
+  .footer-contact-divider{display:none}
+  .hero-kicker{font-size:clamp(48px,13vw,58px)}
   .other-grid{grid-template-columns:1fr}
   .project-stats{grid-template-columns:1fr}
+  .case-sheet{top:max(12px,env(safe-area-inset-top));right:10px;bottom:max(12px,env(safe-area-inset-bottom));left:10px;padding:62px 16px 20px;border-radius:20px}
+  .case-close{top:20px;right:20px;width:42px;height:42px}
+  .case-sheet h3{font-size:26px}
+  .case-gallery{gap:12px}
+  .case-nav{grid-template-columns:1fr;grid-template-areas:"prev" "all" "next";gap:10px;margin-top:24px}
+  .case-nav-button{min-width:0;min-height:76px;padding:14px;border-radius:14px}
+  .case-nav-button strong{overflow-wrap:anywhere}
+  .case-nav-all{min-height:62px}
   .hero-kicker.title-glow,.footer-cta h2.title-glow,.title-glow{
     --title-glow-blur:6px;--title-glow-opacity:.3;
   }
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-bg{background:#02040b url("assets/hero-video-poster.webp") 0% center/cover no-repeat}
+  .hero-bg video{display:none}
+  .hero-metal-layer{display:none}
+  .tool-row.left,.tool-row.right{animation:none}
+}
+@media (max-width:900px) and (prefers-reduced-motion:reduce){
+  .hero-bg{background-position:44% center;background-size:260% auto}
 }
 </style>
 </head>
@@ -338,10 +534,8 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
 <canvas class="dot-field" id="dotField" aria-hidden="true"></canvas>
 <canvas class="cursor-starlight" id="cursorStarlight" aria-hidden="true"></canvas>
 
-<header class="hero" id="top">
-  <div class="hero-bg"><img src="assets/hero-poster.jpg" alt="" /></div>
-  <nav class="nav" aria-label="主导航">
-    <a class="nav-logo" href="#top"><span class="mark"></span>Lecai UX</a>
+<nav class="nav" aria-label="主导航">
+    <a class="nav-logo" href="#top">UX Portfolio</a>
     <div class="nav-links" id="navLinks">
       <a class="active" href="#top">Home</a>
       <a href="#about">About</a>
@@ -349,25 +543,31 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
       <a href="#contact">Contact</a>
     </div>
     <div style="display:flex;gap:12px;align-items:center">
-      <a class="glass nav-cta" href="#explore">Start Exploring</a>
+      <a class="glass nav-cta" href="#explore">Exploring</a>
       <button class="glass mobile-menu" id="menuButton" aria-expanded="false">Menu</button>
     </div>
-  </nav>
+</nav>
+
+<header class="hero" id="top" data-motion-viewport>
+  <div class="hero-bg">
+    <video id="heroVideo" muted loop playsinline preload="none" poster="assets/hero-video-poster.webp" aria-hidden="true">
+      <source src="assets/videos/hero-background-faststart.mp4" type="video/mp4" />
+    </video>
+  </div>
   <div class="hero-center">
-    <p class="hero-kicker fade-in title-glow" data-glow="UX Experience Designer">UX Experience Designer</p>
-    <p class="hero-subtitle fade-in" style="--delay:120ms">B/G端 政企采购<span class="divider">｜</span>AI Agent 设计<span class="divider">｜</span>设计系统与工程化</p>
-    <p class="hero-subtext fade-in" style="--delay:200ms">我们习惯仰望星空，却忘了脚下的选择，也能改变未来的轨迹。</p>
+    <p class="hero-kicker fade-in title-glow" data-glow="UX Experience&#10;Designer" aria-label="UX Experience Designer"><span class="hero-title-line">UX Experience</span><span class="hero-title-line">Designer</span></p>
+    <p class="hero-subtitle fade-in" style="--delay:120ms">B/C端体验设计 <span class="divider">|</span> AI Agent设计 <span class="divider">|</span> 设计系统与工程化</p>
     <div class="hero-actions fade-in" style="--delay:300ms">
-      <a class="glass hero-primary" href="#projects">查看作品 ↗</a>
+      <a class="glass hero-primary" href="#projects">View Work ↗</a>
     </div>
   </div>
 </header>
 
 <main>
   <!-- 走马灯 -->
-  <section class="marquee" id="explore" aria-label="精选视觉项目预览">
-    <div class="marquee-row" id="rowOne"></div>
-    <div class="marquee-row reverse" id="rowTwo"></div>
+  <section class="marquee" id="explore" data-motion-viewport aria-label="精选视觉项目预览">
+    <div class="marquee-row reverse" id="rowOne"></div>
+    <div class="marquee-row" id="rowTwo"></div>
   </section>
 
   <!-- 关于我 -->
@@ -375,61 +575,62 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
     <div class="about-header">
       <div>
         <p class="section-eyebrow fade-in">About / 01</p>
-        <h2 class="about-title fade-in title-glow" data-glow="Hi，我是一名资深 UX 体验设计师。">Hi，我是一名资深 UX 体验设计师。</h2>
-        <p class="about-summary fade-in" style="--delay:100ms">近10年 UI/UX 产品设计经验，专注 B端 SaaS、C 端工具、AI 产品与企业级系统设计。擅长从复杂业务中梳理信息架构，构建可扩展的设计体系，推动产品体验与业务价值共同成长。</p>
+        <h2 class="about-title fade-in title-glow" data-glow="HI，我是杨美涵。">HI，我是杨美涵。</h2>
       </div>
       <div class="wechat-contact fade-in" style="--delay:160ms">
-        <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
-        <div class="wechat-popover" role="dialog" aria-label="微信联系名片">
+        <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me <img src="assets/wechat-icon.svg" alt="" aria-hidden="true" /></button>
+        <div class="wechat-popover" role="dialog" aria-label="杨小曼微信名片">
           <div class="wechat-profile">
-            <div class="wechat-avatar"><img src="assets/wechat-avatar.png" alt="微信头像" /></div>
-            <div><strong class="wechat-profile-name">微信名片</strong><span class="wechat-profile-location">（待补充）</span></div>
+            <div class="wechat-avatar"><img src="assets/wechat-avatar-cat.jpg" alt="微信头像" /></div>
+            <div><strong class="wechat-profile-name">杨小曼</strong><span class="wechat-profile-location">Iris1943</span></div>
           </div>
-          <img class="wechat-qr-image" src="assets/wechat-qr.png" alt="微信二维码（占位）" />
-          <p class="hint">扫码添加微信（占位图，待替换）</p>
+          <img class="wechat-qr-image" src="assets/wechat-qr-user.png" alt="杨小曼微信二维码" loading="lazy" decoding="async" width="700" height="700" />
         </div>
       </div>
+      <p class="about-summary fade-in" style="--delay:100ms">深耕体验设计领域，具备扎实的多端设计实战经验与成熟交付能力，专注 B 端产品、电商平台、AI 产品体验设计，以及设计系统搭建与工程化落地。擅长从业务出发提炼设计策略，搭建可复用、可扩展的标准化设计体系，赋能产品体验升级和业务增长。</p>
     </div>
 
     <div class="feature-grid">
-      <article class="feature-card tall fade-in" style="--x:-30px;--y:0">
-        <img class="bgimg" src="assets/about-portrait.jpg" alt="" />
+      <article class="feature-card tall portrait-card fade-in" style="--x:-30px;--y:0">
+        <img class="bgimg portrait-base" src="assets/about-portrait-id-badge.webp" alt="" loading="lazy" decoding="async" width="1206" height="1690" />
         <div class="shade"></div>
         <div class="feature-label"><span class="spark">✦</span><span>个人背景</span><span class="spark">✦</span></div>
         <div class="big-stat-content">
-          <strong>5年</strong><span>B2G/B2B 体验设计经验</span>
-          <div class="profile-tags"><span class="glass">乐采AI</span><span class="glass">资深UX设计师</span><span class="glass">最佳体验奖·最佳视觉奖</span></div>
+          <strong class="profile-role">UX Designer</strong>
+          <div class="profile-tags"><span class="glass">2022年度最佳体验奖</span><span class="glass">2023年度最佳视觉奖</span></div>
         </div>
       </article>
       <div class="experience-grid">
         <article class="feature-card work-card fade-in" style="--delay:120ms">
-          <img class="bgimg" src="assets/about-career-abstract.png" alt="" />
+          <img class="bgimg" src="assets/about-career-abstract.webp" alt="" loading="lazy" decoding="async" width="1122" height="1402" />
           <div class="shade"></div>
           <div class="feature-label"><span class="spark">✦</span><span>工作经历</span><span class="spark">✦</span></div>
           <div class="career-list">
-            <div class="career-row"><span>至今</span><strong>资深 UX 体验设计师</strong><span>乐采AI · 政企采购</span></div>
-            <div class="career-row"><span>2022–2023</span><strong>最佳体验奖 · 最佳视觉奖</strong><span>公司年度奖项</span></div>
-            <div class="career-row"><span>2023–2024</span><strong>锐意创新奖（团体）</strong><span>采云学院项目 · 连续两年</span></div>
+            <div class="career-row"><span>2021.05-2026.07</span><svg class="career-star" viewBox="0 0 960 960" aria-hidden="true" focusable="false"><path d="M843.5712 478.481067S658.090667 461.482667 577.672533 381.5424C497.2544 301.397333 477.866667 2.4576 477.866667 2.4576s-16.1792 299.008-95.778134 379.972267c-79.530667 80.964267-264.874667 99.805867-264.874666 99.805866s185.5488 16.930133 265.898666 96.938667c80.4864 80.145067 99.805867 379.016533 99.805867 379.016533s16.1792-299.008 95.778133-380.040533c79.530667-80.896 264.874667-99.7376 264.874667-99.7376z"/></svg><strong>政采云</strong><span>资深 UX 设计师</span></div>
+            <div class="career-row"><span>2017.10-2020.11</span><svg class="career-star" viewBox="0 0 960 960" aria-hidden="true" focusable="false"><path d="M843.5712 478.481067S658.090667 461.482667 577.672533 381.5424C497.2544 301.397333 477.866667 2.4576 477.866667 2.4576s-16.1792 299.008-95.778134 379.972267c-79.530667 80.964267-264.874667 99.805867-264.874666 99.805866s185.5488 16.930133 265.898666 96.938667c80.4864 80.145067 99.805867 379.016533 99.805867 379.016533s16.1792-299.008 95.778133-380.040533c79.530667-80.896 264.874667-99.7376 264.874667-99.7376z"/></svg><strong>新浪分期</strong><span>高级 UI 设计师</span></div>
+            <div class="career-row"><span>2015.03-2017.08</span><svg class="career-star" viewBox="0 0 960 960" aria-hidden="true" focusable="false"><path d="M843.5712 478.481067S658.090667 461.482667 577.672533 381.5424C497.2544 301.397333 477.866667 2.4576 477.866667 2.4576s-16.1792 299.008-95.778134 379.972267c-79.530667 80.964267-264.874667 99.805867-264.874666 99.805866s185.5488 16.930133 265.898666 96.938667c80.4864 80.145067 99.805867 379.016533 99.805867 379.016533s16.1792-299.008 95.778133-380.040533c79.530667-80.896 264.874667-99.7376 264.874667-99.7376z"/></svg><strong>约课科技</strong><span>设计负责人</span></div>
+            <div class="career-row"><span>2013.11-2015.02</span><svg class="career-star" viewBox="0 0 960 960" aria-hidden="true" focusable="false"><path d="M843.5712 478.481067S658.090667 461.482667 577.672533 381.5424C497.2544 301.397333 477.866667 2.4576 477.866667 2.4576s-16.1792 299.008-95.778134 379.972267c-79.530667 80.964267-264.874667 99.805867-264.874666 99.805866s185.5488 16.930133 265.898666 96.938667c80.4864 80.145067 99.805867 379.016533 99.805867 379.016533s16.1792-299.008 95.778133-380.040533c79.530667-80.896 264.874667-99.7376 264.874667-99.7376z"/></svg><strong>易观国际</strong><span>UI 设计师</span></div>
           </div>
         </article>
-        <article class="feature-card fade-in" style="--delay:120ms">
-          <img class="bgimg" src="assets/about-tools.jpg" alt="" />
+        <article class="feature-card tools-card fade-in" style="--delay:120ms" data-motion-viewport>
+          <img class="bgimg" src="assets/about-tools-stars.webp" alt="" loading="lazy" decoding="async" width="1569" height="1003" />
           <div class="shade"></div>
-          <div class="feature-label"><span class="spark">✦</span><span>日常工具</span><span class="spark">✦</span></div>
+          <div class="feature-label"><span class="spark">✦</span><span>专业技能</span><span class="spark">✦</span></div>
           <div class="tool-marquee" aria-hidden="true">
-            <div class="tool-row" id="toolRowA"></div>
+            <div class="tool-row left" id="toolRowA"></div>
             <div class="tool-row right" id="toolRowB"></div>
           </div>
         </article>
-        <article class="feature-card fade-in" style="--delay:220ms">
-          <img class="bgimg" src="assets/about-advantage.jpg" alt="" />
+        <article class="feature-card advantage-card fade-in" style="--delay:220ms" data-motion-viewport>
+          <img class="bgimg" src="assets/about-advantage-space.webp" alt="" loading="lazy" decoding="async" width="1536" height="983" />
           <div class="shade"></div>
           <div class="feature-label"><span class="spark">✦</span><span>个人优势</span><span class="spark">✦</span></div>
           <div class="advantage-grid">
-            <span class="glass advantage-tag" style="--rot:4deg;--dur:8.6s">B端 SaaS</span>
-            <span class="glass advantage-tag" style="--rot:-5deg;--dur:9.4s;--tx:-5px">C端工具</span>
-            <span class="glass advantage-tag" style="--rot:-4deg;--dur:10.2s;--ty:6px">Web 官网</span>
-            <span class="glass advantage-tag" style="--rot:5deg;--dur:9s;--tx:-4px;--ty:5px">AI 产品实践</span>
+            <span class="glass advantage-tag" style="--rot:4deg;--dur:5.8s;--tx:10px;--ty:-14px">AI 产品体验</span>
+            <span class="glass advantage-tag" style="--rot:-5deg;--dur:6.4s;--tx:-12px;--ty:-9px">定义产品风格</span>
+            <span class="glass advantage-tag" style="--rot:-4deg;--dur:7.1s;--tx:8px;--ty:11px">设计系统与工程化</span>
+            <span class="glass advantage-tag" style="--rot:5deg;--dur:6.2s;--tx:-10px;--ty:9px">设计策略落地</span>
+            <span class="glass advantage-tag" style="--rot:2deg;--dur:6.8s;--tx:7px;--ty:-10px">设计规范Skill</span>
           </div>
         </article>
       </div>
@@ -446,7 +647,7 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   </section>
 
   <!-- 其他项目 -->
-  <section class="other-projects" id="other-projects">
+  <section class="other-projects" id="other-projects" hidden>
     <div class="fade-in">
       <p class="section-eyebrow">More Work / 03</p>
       <h2 class="section-title title-glow" data-glow="其他项目">其他项目</h2>
@@ -464,56 +665,87 @@ footer.page-footer{display:flex;justify-content:space-between;gap:18px;width:var
   <!-- 联系 -->
   <section class="footer-cta" id="contact">
     <h2 class="fade-in title-glow" data-glow="Design with strategy,&#10;deliver with engineering.">Design with strategy,<br>deliver with engineering.</h2>
-    <p class="fade-in" style="--delay:100ms">如果你正在构建 B/G 端系统、AI 产品或企业级设计体系，欢迎与我交流，一起把复杂业务变成清晰好用的产品。</p>
+    <p class="fade-in" style="--delay:100ms">欢迎与我交流，一起把复杂业务变成清晰好用的产品。</p>
     <div class="wechat-contact fade-in" style="--delay:180ms">
-      <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me ✉</button>
-      <div class="wechat-popover center" role="dialog" aria-label="微信联系名片">
+      <button class="glass contact-button wechat-cta" type="button" aria-expanded="false">Contact Me <img src="assets/wechat-icon.svg" alt="" aria-hidden="true" /></button>
+      <div class="wechat-popover center" role="dialog" aria-label="杨小曼微信名片">
         <div class="wechat-profile">
-          <div class="wechat-avatar"><img src="assets/wechat-avatar.png" alt="微信头像" /></div>
-          <div><strong class="wechat-profile-name">微信名片</strong><span class="wechat-profile-location">（待补充）</span></div>
+          <div class="wechat-avatar"><img src="assets/wechat-avatar-cat.jpg" alt="微信头像" /></div>
+          <div><strong class="wechat-profile-name">杨小曼</strong><span class="wechat-profile-location">Iris1943</span></div>
         </div>
-        <img class="wechat-qr-image" src="assets/wechat-qr.png" alt="微信二维码（占位）" />
-        <p class="hint">扫码添加微信（占位图，待替换）</p>
+        <img class="wechat-qr-image" src="assets/wechat-qr-user.png" alt="杨小曼微信二维码" loading="lazy" decoding="async" width="700" height="700" />
       </div>
     </div>
-    <a class="footer-contact-phone" href="tel:13000000000">Tel. 130 0000 0000（占位）</a>
+    <div class="footer-contact-details" aria-label="联系方式">
+      <a class="footer-contact-item" href="tel:18610933270">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.03-.24c1.12.37 2.33.56 3.56.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.23.2 2.44.57 3.56a1 1 0 0 1-.25 1.03z"/></svg>
+        <span>186-1093-3270</span>
+      </a>
+      <span class="footer-contact-divider" aria-hidden="true">/</span>
+      <a class="footer-contact-item" href="mailto:yangmeihan@126.com">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 8.08L4.6 7H4v.62l8 6.57 8-6.57V7h-.6z"/></svg>
+        <span>yangmeihan@126.com</span>
+      </a>
+      <span class="footer-contact-divider" aria-hidden="true">/</span>
+      <span class="footer-contact-item">
+        <img src="assets/wechat-icon.svg" alt="" aria-hidden="true" />
+        <span>Iris1943</span>
+      </span>
+    </div>
   </section>
 </main>
 
 <footer class="page-footer">
-  <span>© 2026 Lecai UX</span>
+  <span>© 2026 YANGMEIHAN</span>
   <span>UI/UX Portfolio</span>
 </footer>
 
 <!-- 项目详情抽屉 -->
 <div class="case-overlay" id="caseOverlay" aria-hidden="true">
-  <button class="case-backdrop" data-case-close aria-label="关闭项目详情"></button>
-  <button class="glass case-close" data-case-close aria-label="关闭项目详情">✕</button>
-  <section class="case-sheet" role="dialog" aria-modal="true" aria-label="项目详情">
-    <h3 id="caseTitle"></h3>
+  <button class="case-backdrop" data-case-close tabindex="-1" aria-label="关闭项目详情"></button>
+  <button class="glass case-close" id="caseCloseButton" data-case-close aria-label="关闭项目详情">✕</button>
+  <section class="case-sheet" role="dialog" aria-modal="true" aria-labelledby="caseTitle">
+    <h3 id="caseTitle" tabindex="-1"></h3>
     <p class="case-desc" id="caseDesc"></p>
     <div class="case-gallery" id="caseGallery"></div>
+    <nav class="case-nav" aria-label="项目详情导航">
+      <button class="case-nav-button case-nav-prev" id="casePrevious" data-case-previous hidden><small>← PREVIOUS</small><strong id="casePreviousName"></strong></button>
+      <button class="case-nav-button case-nav-all" id="caseBackToList" data-case-return><small>ALL WORK</small><strong>返回列表</strong></button>
+      <button class="case-nav-button case-nav-next" id="caseNext" data-case-next hidden><small>NEXT →</small><strong id="caseNextName"></strong></button>
+    </nav>
   </section>
 </div>
 
+<script src="case-detail.mjs"></script>
 <script>
 /* ===== 数据（真实资料，来自作品集 PDF） ===== */
-const COVERS = ['proj-lemall','case-ai-agent','case-brand-matrix','case-dorami','case-caiyun','proj-dataviz','proj-designclaw','proj-supervision'];
+/* 项目图片按封面、01、02……的顺序读取，替换同名文件即可更新画面。 */
+function projectGallery(folder,name,heights){
+  const base=`assets/project-images/${folder}`;
+  return [
+    {src:`${base}/cover.webp`,alt:`${name}案例封面`,width:3840,height:2160},
+    ...heights.map((height,index)=>({src:`${base}/${String(index+1).padStart(2,'0')}.webp`,alt:`${name}案例第 ${index+1} 页`,width:3840,height})),
+  ];
+}
 const PROJECTS = [
-  {id:'ai-agent', name:'政企商品牌矩阵<br>与视觉策略体系', desc:'从业务定位出发推导设计方向：主导「政府+互联网视觉语言」研究，独创 6 步推导法，产出《前台设计原则》，构建政企商品牌矩阵——政采蓝、乐采橙、溯采红三品牌落在矩阵不同象限，把模糊的「风格感觉」转化为可定位、可推导、可落地的策略框架。',
-   tags:['设计策略','品牌矩阵','前台设计原则'], cover:'case-ai-agent', accent:'rgba(135,166,255,',
-   stats:[['品牌视觉策略','3套'],['推导方法论','6步法']]},
-  {id:'dorami', name:'设计系统与工程化<br>Dorami 组件平台', desc:'主导前台设计体系梳理：统一 60 个基础组件样式与规则，建立主题 Token 变量实现多品牌一键换肤，落地 Dorami 组件资产管理平台，用 AI 承接前端开发，把交付链路从「设计稿→等排期」缩短为「设计稿→AI 生成代码→联调」。',
-   tags:['Design System','组件库','设计工程化'], cover:'case-dorami', accent:'rgba(102,255,196,',
-   stats:[['基础组件统一','60个'],['服务团队','20人']]},
-  {id:'caiyun', name:'采云学院<br>千万级平台体验重构', desc:'以设计 OWNER 身份完成采云学院视觉语言从 0 定义与体验全流程重构，沉淀 5 套课程模板与图片规范，覆盖 10+ 省级区划、5 万+ 评审专家，项目连续两年获团体锐意创新奖。',
-   tags:['0-1 重构','视觉语言','项目管理'], cover:'case-caiyun', accent:'rgba(0,138,214,',
+  {id:'lecai-ai', name:'乐采百应<br>多 Agent 体验设计', desc:'主导「乐采百应」整体体验框架与核心体验链路，将复杂采购业务转化为用户可理解的智能工作流，统一乐采AI产品视觉规范。',
+   tags:['AI Agent','体验框架','视觉标准制定'], cover:'project-images/lecai-ai/cover', accent:'rgba(255,154,92,', borderAccent:'rgba(135,166,255,',
+   gallery:projectGallery('lecai-ai','乐采百应',[9836,9256,5410,2160,2160,2160,2160,2160,2160,13098,3530,2160]),
+   stats:[['采购方式判定','秒级'],['选品比价效率','提升30倍']]},
+  {id:'ai-agent', name:'从「品牌体系」<br>到「AI 设计工程化」', desc:'从业务定位出发推导设计方向，通过视觉强度与气质调节实现多品牌差异化，并落地于实际项目。推进设计资产标准化建设，并借助AI工具开发搭建在线设计资产管理平台，实现多品牌主题一键切换，提升设计交付与协作效率。',
+   tags:['多品牌策略','组件工程化','AI设计提效'], cover:'project-images/ai-agent/cover', accent:'rgba(135,166,255,',
+   gallery:projectGallery('ai-agent','从「品牌体系」到「AI 设计工程化」',[2160,2160,2160,2160,9638,8028,8028,2160,2160,2160,2160,2160,2160]),
+   stats:[['组件总数','60+'],['团队提效约','70%']]},
+  {id:'caiyun', name:'采云学院<br>千万级平台体验重构', desc:'以设计 OWNER 身份完成从 0-1 视觉语言定义与体验重构，制定课程模板与图片规范，产品上线首年访问量930+万，覆盖 10+ 省级区划、5 万+ 评审专家，项目获公司「锐意创新奖」。',
+   tags:['0-1 重构','视觉语言','项目管理'], cover:'project-images/caiyun/cover', accent:'rgba(0,138,214,',
+   gallery:projectGallery('caiyun','采云学院',[2160,2160,2784,2160,3820,5938,3676,6766,4072,2160,2160,2160]),
    stats:[['上线首年访问量','931.5万'],['学习人次','522万']]},
-  {id:'lecai-ai', name:'乐采 AI 3.0<br>多 Agent 体验设计', desc:'主导乐采 AI 3.0 整体体验框架与核心任务链路：定义主 Agent + 5 个垂直 Agent 的交互模式与协作关系，将复杂采购业务转化为用户可理解的智能工作流，并制定全平台 AI 视觉标准，推广至 AI 竞价、AI 合同等应用，成为公司 AI 化转型视觉侧的标准制定者。',
-   tags:['AI Agent','体验框架','视觉标准制定'], cover:'proj-designclaw', accent:'rgba(255,154,92,',
-   stats:[['垂直 Agent 协同','5+1'],['AI 产品覆盖','5款']]},
 ];
 const OTHERS = [
+  {id:'dorami', cat:'tool', title:'设计系统与工程化 Dorami 组件平台', name:'设计系统与工程化<br>Dorami 组件平台', desc:'梳理并改造现有组件库体系，优化统一前台 60+ 基础组件，Vibe Coding 完成组件开发并落地组件库资产管理平台，建立主题 Token 体系实现多品牌主题一键切换。',
+   tags:['Design System','组件库','设计工程化'], cover:'case-dorami', accent:'rgba(102,255,196,',
+   gallery:[{src:'assets/case-dorami.jpg',alt:'Dorami 组件平台当前封面图',width:1400,height:787}],
+   stats:[['基础组件统一','60个'],['服务团队','20人']]},
   {id:'brand', cat:'strategy', cover:'case-brand-matrix', title:'政企商品牌矩阵与视觉策略'},
   {id:'govmall', cat:'strategy', cover:'proj-govmall', title:'政采商城样板间'},
   {id:'lemall', cat:'strategy', cover:'proj-lemall', title:'乐采商城 · 服务类导购重构'},
@@ -523,23 +755,33 @@ const OTHERS = [
   {id:'designclaw', cat:'tool', cover:'proj-designclaw', title:'Design Claw · AI 设计工作流'},
   {id:'dataviz', cat:'data', cover:'proj-dataviz', title:'数据可视化大屏'},
 ];
-const TOOLS_A=['Figma','AntD','Vue3','Token','Vibe Coding','Codex','MCP'];
-const TOOLS_B=['策略','组件','平台','Agent','B/G端','C端','工程化'];
+const TOOLS_A=['Figma','Vibe Coding','交互设计','视觉设计','信息架构','设计系统','AI 产品'];
+const TOOLS_B=['设计策略','多端体验','组件规范','品牌视觉','产品体验','业务理解','工程化'];
 
 /* ===== 走马灯 ===== */
+function selectMarqueeImages(projects){
+  return projects.flatMap(project=>project.gallery.filter(image=>image.width/image.height>=1.5));
+}
+function projectPreviewSrc(src){
+  return src.replace('assets/project-images/','assets/project-previews/');
+}
 function fillRow(el, imgs){
-  const set = imgs.map(c=>`<div class="tile"><img loading="lazy" src="assets/${c}.jpg" alt="项目封面" /></div>`).join('');
+  const set = imgs.map(image=>`<div class="tile"><img loading="lazy" decoding="async" src="${projectPreviewSrc(image.src)}" alt="" width="${image.width}" height="${image.height}" /></div>`).join('');
   el.innerHTML = set + set; /* 复制一份实现无缝循环 */
 }
-fillRow(document.getElementById('rowOne'), COVERS);
-fillRow(document.getElementById('rowTwo'), [...COVERS].reverse());
-document.getElementById('toolRowA').innerHTML = [...TOOLS_A,...TOOLS_A].map(t=>`<span class="glass tool-tile">${t}</span>`).join('');
-document.getElementById('toolRowB').innerHTML = [...TOOLS_B,...TOOLS_B].map(t=>`<span class="glass tool-tile">${t}</span>`).join('');
+const marqueeImages = selectMarqueeImages(PROJECTS);
+const marqueeMidpoint = Math.ceil(marqueeImages.length/2);
+fillRow(document.getElementById('rowOne'), marqueeImages.slice(0, marqueeMidpoint));
+fillRow(document.getElementById('rowTwo'), marqueeImages.slice(marqueeMidpoint));
+const TOOL_BACKDROPS = [['19%','26%'],['42%','17%'],['68%','26%'],['82%','47%'],['28%','72%'],['55%','63%'],['75%','75%']];
+const toolTile = (t,index) => { const [x,y] = TOOL_BACKDROPS[index % TOOL_BACKDROPS.length]; return `<span class="glass tool-tile" style="--tile-x:${x};--tile-y:${y}"><span class="tool-label">${t === 'Vibe Coding' ? 'Vibe<br>Coding' : t}</span></span>`; };
+document.getElementById('toolRowA').innerHTML = [...TOOLS_A,...TOOLS_A].map(toolTile).join('');
+document.getElementById('toolRowB').innerHTML = [...TOOLS_B,...TOOLS_B].map((t,index)=>toolTile(t,index + 3)).join('');
 
 /* ===== 精选项目卡片 ===== */
 document.getElementById('projectList').innerHTML = PROJECTS.map((p,i)=>`
   <div class="project-wrap" style="--stack:${i*40}px">
-    <article class="project-card" style="--accent-fade:${p.accent}.03);--accent-border:${p.accent}.28)">
+    <article class="project-card" style="--accent-fade:${p.accent}.03);--accent-border:${p.borderAccent || p.accent}.28)">
       <div class="project-copy">
         <div>
           <h3 class="project-name">${p.name}</h3>
@@ -550,7 +792,7 @@ document.getElementById('projectList').innerHTML = PROJECTS.map((p,i)=>`
       </div>
       <div class="project-visual">
         <button class="project-image case-trigger" data-case="${p.id}" aria-label="查看项目详情">
-          <img loading="lazy" src="assets/${p.cover}.jpg" alt="项目封面" />
+          <img loading="lazy" decoding="async" src="${projectPreviewSrc(`assets/${p.cover}.webp`)}" alt="项目封面" />
         </button>
         <div class="project-stats">
           ${p.stats.map(s=>`<div class="project-stat"><span>${s[0]}</span><strong>${s[1]}</strong></div>`).join('')}
@@ -575,32 +817,25 @@ document.getElementById('otherFilter').addEventListener('click', e=>{
 
 /* ===== 详情抽屉 ===== */
 const overlay = document.getElementById('caseOverlay');
-function openCase(id){
-  const p = PROJECTS.find(x=>x.id===id);
-  const o = OTHERS.find(x=>x.id===id);
-  const title = p ? p.name.replace(/<br>/g,' ') : (o ? o.title : '项目详情');
-  const desc  = p ? p.desc : '该项目详情内容为占位文案，替换为你的真实项目介绍即可。';
-  const cover = p ? p.cover : (o ? o.cover : 'cover-saas');
-  document.getElementById('caseTitle').textContent = title;
-  document.getElementById('caseDesc').textContent = desc;
-  document.getElementById('caseGallery').innerHTML =
-    [1,2,3].map(()=>`<img src="assets/${cover}.jpg" alt="${title}" />`).join('');
-  overlay.classList.add('open');
-  overlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow='hidden';
-  overlay.querySelector('.case-sheet').scrollTop = 0;
-}
-function closeCase(){
-  overlay.classList.remove('open');
-  overlay.setAttribute('aria-hidden','true');
-  document.body.style.overflow='';
-}
+const caseController = globalThis.CaseDetail.createController({
+  document, window, projects:PROJECTS, others:OTHERS,
+  background:[document.querySelector('header'),document.querySelector('main'),document.querySelector('footer')].filter(Boolean),
+  overlay, sheet:overlay.querySelector('.case-sheet'),
+  title:document.getElementById('caseTitle'), desc:document.getElementById('caseDesc'), gallery:document.getElementById('caseGallery'),
+  previous:document.getElementById('casePrevious'), next:document.getElementById('caseNext'),
+  previousName:document.getElementById('casePreviousName'), nextName:document.getElementById('caseNextName'),
+  closeButton:document.getElementById('caseCloseButton'), returnButton:document.getElementById('caseBackToList'),
+});
+function openCase(id, trigger){ return caseController.open(id, trigger); }
+function closeCase(){ return caseController.close(); }
 document.addEventListener('click', e=>{
   const t = e.target.closest('.case-trigger');
-  if(t){ openCase(t.dataset.case); return; }
-  if(e.target.closest('[data-case-close]')) closeCase();
+  if(t){ openCase(t.dataset.case, t); return; }
+  if(e.target.closest('[data-case-close],[data-case-return]')){ closeCase(); return; }
+  if(e.target.closest('[data-case-previous]')){ caseController.adjacent(-1); return; }
+  if(e.target.closest('[data-case-next]')) caseController.adjacent(1);
 });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeCase(); });
+document.addEventListener('keydown', e=>caseController.handleKeydown(e));
 
 /* ===== 微信弹层 ===== */
 document.querySelectorAll('.wechat-contact').forEach(w=>{
@@ -640,6 +875,9 @@ window.addEventListener('scroll', ()=>{
 },{passive:true});
 
 </script>
+<script src="viewport-motion.mjs"></script>
+<script src="hero-metal-loader.mjs"></script>
+<script src="hero-video.mjs"></script>
 <script src="ambient-field.mjs"></script>
 </body>
 </html>
