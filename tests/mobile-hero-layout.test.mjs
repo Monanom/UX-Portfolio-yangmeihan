@@ -31,13 +31,13 @@ test('手机标题与按钮继续上移时不改变下一屏位置', () => {
   assert.match(mobileCss, /\.hero\{[^}]*min-height:calc\(100svh - clamp\(72px,12svh,120px\)\)/);
 });
 
-test('电脑端标题和按钮上移 64px，手机端仍使用独立偏移', () => {
+test('电脑端按视口高度收回上移距离，手机端仍使用独立偏移', () => {
   const desktopCss = html.slice(0, html.indexOf('@media (max-width:900px){'));
   const desktopGroupRule = desktopCss.match(/\.hero-center\{([^}]*)\}/)?.[1];
   const mobileCss = html.match(/@media \(max-width:900px\)\{([\s\S]*?)\n\}\n@media \(max-width:560px\)/)?.[1];
   const mobileGroupRule = mobileCss?.match(/\.hero-center\{([^}]*)\}/)?.[1];
 
-  assert.match(desktopGroupRule ?? '', /position:relative;top:-64px/);
+  assert.match(desktopGroupRule ?? '', /position:relative;top:clamp\(-64px,calc\(100px - 25svh\),-24px\)/);
   assert.match(mobileGroupRule ?? '', /top:calc\(clamp\(-48px,-5svh,-24px\) - 64px\)/);
-  assert.match(desktopCss, /\.hero\{[^}]*min-height:100svh/);
+  assert.match(desktopCss, /\.hero\{[^}]*min-height:max\(100svh,540px\)/);
 });

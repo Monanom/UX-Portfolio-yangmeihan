@@ -115,7 +115,7 @@ test('首页保留可复制的真实标题文字，桌面特效按需加载', as
   const notice = await readFile(new URL('../assets/licenses/paper-shaders-NOTICE.txt', import.meta.url), 'utf8');
 
   assert.match(html, /<p class="hero-kicker[^\"]*title-glow[^\"]*" data-glow="UX Experience&#10;Designer" aria-label="UX Experience Designer"><span class="hero-title-line">UX Experience<\/span><span class="hero-title-line">Designer<\/span><\/p>/);
-  assert.match(html, /\.hero-kicker\{font-size:clamp\(60px,10\.5vw,144px\)[^}]*line-height:\.96/s);
+  assert.match(html, /\.hero-kicker\{font-size:clamp\(60px,min\(10\.5vw,15svh\),144px\)[^}]*line-height:\.96/s);
   assert.match(html, /\.hero-title-line\{display:block\}/);
   assert.match(html, /\.hero-subtitle\{margin-top:48px/);
   assert.match(html, /\.hero-actions\{margin-top:48px\}/);
