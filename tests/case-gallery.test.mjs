@@ -95,7 +95,7 @@ test('乐采百应卡片展示采购判定与选品比价成效', () => {
 test('品牌体系项目卡片展示组件总数与团队提效', () => {
   assert.deepEqual(Array.from(featuredProject('ai-agent').stats, item => Array.from(item)), [
     ['组件总数','60+'],
-    ['团队提效约','70%'],
+    ['团队提效约','50%'],
   ]);
 });
 
